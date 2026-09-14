@@ -20,6 +20,9 @@ import { QueryProvider } from "@/components/providers/query-provider";
 export const metadata: Metadata = {
   title: "Ivy Homes",
   description: "Browse, filter and explore verified properties in Gurgaon",
+  icons: {
+    icon: "/icons/ivyhomes_logo.svg",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

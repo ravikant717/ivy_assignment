@@ -129,7 +129,7 @@ export function SavedCard({
                     <div className="mt-1 flex items-center gap-1 text-xs text-gray-500">
                         <MapPin className="h-3.5 w-3.5 shrink-0 text-gray-400" />
                         <span className="line-clamp-1">
-                            {formatLocality(listing.locality, "Bangalore")}
+                            {formatLocality(listing.locality, "Gurgaon")}
                         </span>
                     </div>
 

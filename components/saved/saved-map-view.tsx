@@ -26,7 +26,7 @@ export function SavedMapView({
     const markersLayerRef = useRef<any>(null);
     const markersMapRef = useRef<Map<string, any>>(new Map());
 
-    // Initialize Leaflet map centered on Bangalore
+    // Initialize Leaflet map centered on Gurgaon
     useEffect(() => {
         if (!mapContainerRef.current || mapInstanceRef.current) {
             return;
@@ -39,10 +39,10 @@ export function SavedMapView({
                 return;
             }
 
-            // Bangalore coordinates: 12.9716, 77.5946
+            // Gurgaon coordinates: 28.4595, 77.0266
             const map = L.map(mapContainerRef.current, {
-                center: [12.9716, 77.5946],
-                zoom: 11,
+                center: [28.4595, 77.0266],
+                zoom: 12,
                 zoomControl: false,
             });
 
@@ -82,9 +82,9 @@ export function SavedMapView({
         const validCoords: [number, number][] = [];
 
         listings.forEach((listing, index) => {
-            // Use listing's coords or deterministic offset if missing
-            const lat = Number(listing.latitude) || 12.9716 + ((index % 3) - 1) * 0.04;
-            const lng = Number(listing.longitude) || 77.5946 + ((index % 2) - 0.5) * 0.06;
+            // Use listing's coords or deterministic offset in Gurgaon if missing
+            const lat = Number(listing.latitude) || 28.4595 + ((index % 3) - 1) * 0.04;
+            const lng = Number(listing.longitude) || 77.0266 + ((index % 2) - 0.5) * 0.06;
 
             if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
 
@@ -130,7 +130,7 @@ export function SavedMapView({
                             ${titleFormatted}
                         </p>
                         <p class="text-[11px] text-gray-500">
-                            ${listing.locality || "Bangalore"}
+                            ${listing.locality || "Gurgaon"}
                         </p>
                         <p class="mt-0.5 text-xs font-extrabold text-[#047857]">
                             ${priceFormatted}
@@ -182,8 +182,8 @@ export function SavedMapView({
         const marker = markersMapRef.current.get(selectedListing.listing_id);
         if (!marker) return;
 
-        const lat = Number(selectedListing.latitude) || 12.9716;
-        const lng = Number(selectedListing.longitude) || 77.5946;
+        const lat = Number(selectedListing.latitude) || 28.4595;
+        const lng = Number(selectedListing.longitude) || 77.0266;
 
         mapInstanceRef.current.panTo([lat, lng], {
             animate: true,

@@ -99,8 +99,8 @@ export default function SingleListingPage({ params }: SingleListingPageProps) {
             {/* Breadcrumbs Navigation */}
             <PropertyBreadcrumbs
                 listingId={listing.listing_id}
-                locality={listing.locality || "Civil Lines"}
-                city={localityFormatted.split(",")[1]?.trim() || "Prayagraj"}
+                locality={listing.locality || "Sector 65"}
+                city={localityFormatted.split(",")[1]?.trim() || "Gurgaon"}
             />
 
             {/* Main Content */}

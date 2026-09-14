@@ -22,7 +22,7 @@ export function SavedMapCard({ count, onClick }: SavedMapCardProps) {
                     <p className="text-xs font-bold text-gray-900">
                         {count} saved {count === 1 ? "property" : "properties"}
                     </p>
-                    <p className="text-[11px] text-gray-500">Across Bangalore</p>
+                    <p className="text-[11px] text-gray-500">Across Gurgaon</p>
                 </div>
             </div>
             <ChevronRight className="h-4 w-4 text-gray-400" />
