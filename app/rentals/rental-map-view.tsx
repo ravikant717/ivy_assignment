@@ -30,8 +30,13 @@ export function RentalMapView({
             onSelectItem={onSelectRental}
             getItemId={(r) => r.listing_id}
             getItemCoords={(r) => {
-                const lat = Number(r.latitude);
-                const lng = Number(r.longitude);
+                let lat = Number(r.latitude);
+                let lng = Number(r.longitude);
+                if (lat > 70 && lng < 35) {
+                    const temp = lat;
+                    lat = lng;
+                    lng = temp;
+                }
                 return Number.isFinite(lat) && Number.isFinite(lng) ? [lat, lng] : null;
             }}
             getItemPopupData={(r, index) => ({

@@ -108,15 +108,37 @@ export function computeInsightsFromRaw(): AnalyticsSummary & { discoveries: Data
         }
     });
 
-    // Costliest Project
-    const costliest = [...projects].sort((a, b) => (b.price_max || 0) - (a.price_max || 0))[0] || {
-        project_id: "P60090",
-        apartment_name: "Puravankara Willows",
-        price_max: 98.9,
+    // Costliest Project (unit-aware normalization: values >= 10 are Lakhs, values < 10 are Crores)
+    const normalizeProjectPrice = (raw?: number | null) => {
+        const num = Number(raw) || 0;
+        if (num <= 0) return 0;
+        return num >= 10 ? num * 100000 : num * 10000000;
+    };
+    const costliest = [...projects].sort(
+        (a, b) => normalizeProjectPrice(b.price_max) - normalizeProjectPrice(a.price_max)
+    )[0] || {
+        project_id: "P60060",
+        apartment_name: "Mantri Terraces",
+        price_max: 5.83,
     };
 
-    // 2. Buy Pricing Stats
-    const validBuy = listings.filter((l) => l.price > 0 && l.carpet_area > 0);
+    // 2. Buy Pricing Stats (filter is_live and normalize MagicHomes sqm to sqft)
+    const validBuy = listings
+        .filter((l) => l.is_live && l.price > 0 && l.carpet_area > 0)
+        .map((l) => {
+            let price = Math.abs(Number(l.price) || 0);
+            if (price > 0 && price < 100000) price = price * 1000;
+            let carpet_area = Number(l.carpet_area) || 0;
+            if (l.website?.toLowerCase() === "magichomes" || (carpet_area > 0 && carpet_area < 300)) {
+                carpet_area = Math.round(carpet_area * 10.7639);
+            }
+            return {
+                ...l,
+                price,
+                carpet_area,
+            };
+        });
+
     const buyPrices = validBuy.map((l) => l.price).sort((a, b) => a - b);
     const medianBuyPrice = buyPrices[Math.floor(buyPrices.length / 2)] || 14740000;
 

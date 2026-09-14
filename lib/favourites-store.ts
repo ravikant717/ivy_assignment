@@ -246,13 +246,37 @@ export async function resolveListingObjects(
             );
 
             if (!("errorResponse" in apiResult) && apiResult.response.ok) {
-                const listing: Listing = await apiResult.response.json();
+                const rawListing: Listing = await apiResult.response.json();
+                let price = Math.abs(Number(rawListing.price) || 0);
                 const isRental =
-                    listing.property_type?.toLowerCase().includes("rent") ||
-                    Number(listing.price) < 200000;
+                    rawListing.property_type?.toLowerCase().includes("rent") ||
+                    price < 200000;
+                if (price > 0 && price < 100000 && !isRental) {
+                    price = price * 1000;
+                }
+                let carpet_area = Number(rawListing.carpet_area) || 0;
+                if ((rawListing.website?.toLowerCase() === "magichomes" && carpet_area < 350) || (carpet_area > 0 && carpet_area < 300)) {
+                    carpet_area = Math.round(carpet_area * 10.7639);
+                }
+                let super_built_up_area = Number(rawListing.super_built_up_area) || 0;
+                if ((rawListing.website?.toLowerCase() === "magichomes" && super_built_up_area < 450) || (super_built_up_area > 0 && super_built_up_area < 400)) {
+                    super_built_up_area = Math.round(super_built_up_area * 10.7639);
+                }
+                let latitude = Number(rawListing.latitude);
+                let longitude = Number(rawListing.longitude);
+                if (latitude > 70 && longitude < 35) {
+                    const temp = latitude;
+                    latitude = longitude;
+                    longitude = temp;
+                }
 
                 const resolved: SavedListingItem = {
-                    ...listing,
+                    ...rawListing,
+                    price,
+                    carpet_area,
+                    super_built_up_area,
+                    latitude,
+                    longitude,
                     tag: isRental ? "FOR RENT" : "FOR SALE",
                     saved_at: new Date().toISOString(),
                 };

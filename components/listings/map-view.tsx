@@ -30,8 +30,13 @@ export function MapView({
             onSelectItem={onSelectListing}
             getItemId={(l) => l.listing_id}
             getItemCoords={(l) => {
-                const lat = Number(l.latitude);
-                const lng = Number(l.longitude);
+                let lat = Number(l.latitude);
+                let lng = Number(l.longitude);
+                if (lat > 70 && lng < 35) {
+                    const temp = lat;
+                    lat = lng;
+                    lng = temp;
+                }
                 return Number.isFinite(lat) && Number.isFinite(lng) ? [lat, lng] : null;
             }}
             getItemPopupData={(l, index) => ({

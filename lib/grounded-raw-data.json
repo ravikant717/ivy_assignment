@@ -582,11 +582,11 @@
     "projectsWithDiscrepancy": 295,
     "projectsDiscrepancyPct": 73.8,
     "costliestProject": {
-      "id": "P60090",
-      "name": "Puravankara Willows",
-      "locality": "new gurgaon",
-      "priceMinCr": 55.8,
-      "priceMaxCr": 98.9
+      "id": "P60060",
+      "name": "Mantri Terraces",
+      "locality": "golf course road",
+      "priceMinCr": 1.85,
+      "priceMaxCr": 5.83
     },
     "medianBuyPriceCr": "1.47",
     "avgPriceSqft": 14543,

@@ -13,7 +13,7 @@ interface PropertyBreadcrumbsProps {
 export function PropertyBreadcrumbs({
     listingId,
     locality,
-    city = "Prayagraj",
+    city = "Gurgaon",
     backHref = "/listings",
     backLabel = "Back to listings",
 }: PropertyBreadcrumbsProps) {

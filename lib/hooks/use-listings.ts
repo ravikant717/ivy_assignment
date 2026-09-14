@@ -113,17 +113,52 @@ export function useListings(filters: FilterState, sort: SortOption) {
         staleTime: 1000 * 60 * 5, // 5 minutes cache validity
     });
 
-    // Flatten and deduplicate listings across loaded pages, sanitizing negative prices
+    // Flatten and deduplicate listings across loaded pages, normalizing per fixed_api_reference.md
     const listings = useMemo(
         () =>
-            deduplicatePagesById(query.data?.pages, "listing_id", (item) => ({
-                ...item,
-                price: Math.abs(Number(item.price) || 0),
-            })),
+            deduplicatePagesById(query.data?.pages, "listing_id", (item) => {
+                let price = Math.abs(Number(item.price) || 0);
+                // Fix scaled-down prices (6 listings divided by 1000 in raw data)
+                if (price > 0 && price < 100000) {
+                    price = price * 1000;
+                }
+
+                // Fix MagicHomes area reported in square metres (~70-130 sqm -> sq ft)
+                let carpet_area = Number(item.carpet_area) || 0;
+                if ((item.website?.toLowerCase() === "magichomes" && carpet_area < 350) || (carpet_area > 0 && carpet_area < 300)) {
+                    carpet_area = Math.round(carpet_area * 10.7639);
+                }
+
+                let super_built_up_area = Number(item.super_built_up_area) || 0;
+                if ((item.website?.toLowerCase() === "magichomes" && super_built_up_area < 450) || (super_built_up_area > 0 && super_built_up_area < 400)) {
+                    super_built_up_area = Math.round(super_built_up_area * 10.7639);
+                }
+
+                // Fix swapped coordinates anomaly in raw data (Lat > 70, Lng < 35)
+                let latitude = Number(item.latitude);
+                let longitude = Number(item.longitude);
+                if (latitude > 70 && longitude < 35) {
+                    const temp = latitude;
+                    latitude = longitude;
+                    longitude = temp;
+                }
+
+                return {
+                    ...item,
+                    price,
+                    carpet_area,
+                    super_built_up_area,
+                    latitude,
+                    longitude,
+                };
+            }).filter((item) => item.is_live !== false), // Filter out 708 inactive listings per fixed API reference
         [query.data?.pages]
     );
 
-    const totalListings = query.data?.pages[0]?.total ?? listings.length;
+    const totalListings =
+        !query.hasNextPage && listings.length > 0
+            ? listings.length
+            : query.data?.pages[0]?.total ?? listings.length;
 
     return {
         ...query,
