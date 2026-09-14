@@ -11,7 +11,7 @@ export function IvyLogo({
 }: IvyLogoProps) {
     return (
         <img
-            src="/icons/ivyhomes_logo.svg"
+            src="/ivyhomes_logo.svg"
             alt="Ivy Homes"
             className={`${className} ${variant === "white" ? "brightness-0 invert" : ""}`}
         />
