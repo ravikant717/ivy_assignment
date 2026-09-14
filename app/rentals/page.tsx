@@ -196,10 +196,20 @@ export default function RentalsPage() {
                         <div className="space-y-4 lg:col-span-7">
                             {filteredRentals.length === 0 ? (
                                 <PropertyEmptyState
-                                    emoji="🏡"
-                                    title="No rentals match your filters"
-                                    description="Try adjusting or resetting your locality, bedroom, or price filters."
+                                    title="No rentals found"
+                                    description={`We couldn’t find any rental properties matching your criteria.\nTry adjusting your filters or searching in a different location.`}
+                                    primaryActionLabel="Try different filters"
+                                    secondaryActionLabel="Browse all rentals"
                                     onReset={() =>
+                                        setFilters({
+                                            search: "",
+                                            locality: "",
+                                            bedroom: "",
+                                            priceRange: "",
+                                            furnishing: "",
+                                        })
+                                    }
+                                    onSecondaryAction={() =>
                                         setFilters({
                                             search: "",
                                             locality: "",

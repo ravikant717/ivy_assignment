@@ -168,10 +168,18 @@ export default function ProjectsPage() {
                         <div className="space-y-4 lg:col-span-7">
                             {filteredProjects.length === 0 ? (
                                 <PropertyEmptyState
-                                    emoji="🏢"
-                                    title="No projects match your filters"
-                                    description="Try adjusting or resetting your locality or project status filters."
+                                    title="No projects found"
+                                    description={`We couldn’t find any new projects matching your criteria.\nTry adjusting your filters or searching in a different locality.`}
+                                    primaryActionLabel="Try different filters"
+                                    secondaryActionLabel="Browse all projects"
                                     onReset={() =>
+                                        setFilters({
+                                            search: "",
+                                            locality: "",
+                                            status: "",
+                                        })
+                                    }
+                                    onSecondaryAction={() =>
                                         setFilters({
                                             search: "",
                                             locality: "",
