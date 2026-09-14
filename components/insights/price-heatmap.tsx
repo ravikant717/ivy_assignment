@@ -58,10 +58,27 @@ export function PriceHeatmap({
             markersLayerRef.current = markersLayer;
 
             renderPriceMarkers(L, map, markersLayer);
+
+            // Invalidate size once rendered
+            setTimeout(() => {
+                if (mapInstanceRef.current) {
+                    mapInstanceRef.current.invalidateSize();
+                }
+            }, 250);
         });
+
+        const resizeObserver = new ResizeObserver(() => {
+            if (mapInstanceRef.current) {
+                mapInstanceRef.current.invalidateSize();
+            }
+        });
+        if (mapContainerRef.current) {
+            resizeObserver.observe(mapContainerRef.current);
+        }
 
         return () => {
             isMounted = false;
+            resizeObserver.disconnect();
             if (mapInstanceRef.current) {
                 mapInstanceRef.current.remove();
                 mapInstanceRef.current = null;

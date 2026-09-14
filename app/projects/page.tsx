@@ -5,7 +5,7 @@ import type { Project } from "@/types/project";
 import { Navbar } from "@/components/listings/navbar";
 import { ProjectFilterBar } from "@/components/projects/project-filter-bar";
 import { ProjectCard } from "@/components/projects/project-card";
-import { ProjectMapView } from "./project-map-view";
+import { ProjectMapView } from "@/components/projects/map-view";
 import { useProjects, useProjectListingCounts, type ProjectFilterState } from "@/lib/hooks/use-projects";
 import {
     PROJECT_SORT_CONFIGS,
@@ -115,9 +115,7 @@ export default function ProjectsPage() {
         }
     }, [filteredProjects, selectedProject]);
 
-    const headerTitle = isLoading
-        ? "Loading builder projects..."
-        : filters.search.trim()
+    const headerTitle = filters.search.trim()
         ? `${filteredProjects.length} matching in loaded results (of ${totalProjects.toLocaleString("en-IN")})`
         : `${totalProjects.toLocaleString("en-IN")} builder projects found`;
 
@@ -143,15 +141,6 @@ export default function ProjectsPage() {
                     />
                 </section>
 
-                {/* Counter & Sort Subheader */}
-                <PropertySubHeader
-                    title={headerTitle}
-                    isFetching={isFetching && !isLoading && !isLoadingMore}
-                    sort={sort}
-                    onSortChange={setSort}
-                    sortOptions={PROJECT_SORT_CONFIGS}
-                />
-
                 {/* Initial Loading Skeleton */}
                 {isLoading && <PropertySkeleton />}
 
@@ -166,7 +155,17 @@ export default function ProjectsPage() {
 
                 {/* Split View Content (Left: Cards List, Right: Sticky Map) */}
                 {!isLoading && !error && (
-                    <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+                    <>
+                        {/* Counter & Sort Subheader */}
+                        <PropertySubHeader
+                            title={headerTitle}
+                            isFetching={isFetching && !isLoadingMore}
+                            sort={sort}
+                            onSortChange={setSort}
+                            sortOptions={PROJECT_SORT_CONFIGS}
+                        />
+
+                        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
                         {/* Left Column: Project Cards */}
                         <div className="space-y-4 lg:col-span-7">
                             {filteredProjects.length === 0 ? (
@@ -234,6 +233,7 @@ export default function ProjectsPage() {
                             </div>
                         </div>
                     </div>
+                </>
                 )}
             </main>
         </div>

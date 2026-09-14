@@ -5,7 +5,7 @@ import type { Rental } from "@/types/rental";
 import { Navbar } from "@/components/listings/navbar";
 import { FilterBar, type FilterState } from "@/components/listings/filter-bar";
 import { RentalCard } from "@/components/rentals/rental-card";
-import { RentalMapView } from "./rental-map-view";
+import { RentalMapView } from "@/components/rentals/map-view";
 import { useRentals } from "@/lib/hooks/use-rentals";
 import {
     SORT_CONFIGS,
@@ -137,9 +137,7 @@ export default function RentalsPage() {
         }
     }, [filteredRentals, selectedRental]);
 
-    const headerTitle = isLoading
-        ? "Loading rental properties..."
-        : filters.search.trim()
+    const headerTitle = filters.search.trim()
         ? `${filteredRentals.length} matching in loaded results (of ${totalRentals.toLocaleString("en-IN")})`
         : `${totalRentals.toLocaleString("en-IN")} rental properties found`;
 
@@ -168,15 +166,6 @@ export default function RentalsPage() {
                     />
                 </section>
 
-                {/* Counter & Sort Subheader */}
-                <PropertySubHeader
-                    title={headerTitle}
-                    isFetching={isFetching && !isLoading && !isLoadingMore}
-                    sort={sort}
-                    onSortChange={setSort}
-                    sortOptions={SORT_CONFIGS}
-                />
-
                 {/* Initial Loading Skeleton */}
                 {isLoading && <PropertySkeleton />}
 
@@ -191,7 +180,17 @@ export default function RentalsPage() {
 
                 {/* Split View Content (Left: Cards List, Right: Sticky Map) */}
                 {!isLoading && !error && (
-                    <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+                    <>
+                        {/* Counter & Sort Subheader */}
+                        <PropertySubHeader
+                            title={headerTitle}
+                            isFetching={isFetching && !isLoadingMore}
+                            sort={sort}
+                            onSortChange={setSort}
+                            sortOptions={SORT_CONFIGS}
+                        />
+
+                        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
                         {/* Left Column: Rental Cards */}
                         <div className="space-y-4 lg:col-span-7">
                             {filteredRentals.length === 0 ? (
@@ -260,6 +259,7 @@ export default function RentalsPage() {
                             </div>
                         </div>
                     </div>
+                </>
                 )}
             </main>
         </div>

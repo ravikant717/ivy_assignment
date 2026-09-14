@@ -49,3 +49,5 @@ export function ProjectMapView({
         />
     );
 }
+
+export const MapView = ProjectMapView;

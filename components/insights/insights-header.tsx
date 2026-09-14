@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { MapPin } from "lucide-react";
+import { MapPin, Clock } from "lucide-react";
 
 interface InsightsHeaderProps {
     city: string;
@@ -20,14 +20,15 @@ export function InsightsHeader({ city, onCityChange }: InsightsHeaderProps) {
                 </p>
             </div>
 
-            {/* Grounded City Badge */}
-            <div className="relative shrink-0">
+            {/* Grounded City & Reference Moment Badges */}
+            <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+                <div className="flex items-center gap-1.5 rounded-xl border border-gray-200 bg-white px-3 py-2 text-xs font-semibold text-gray-700 shadow-2xs">
+                    <Clock className="h-3.5 w-3.5 text-emerald-600" />
+                    <span>Reference: 10 Sep 2026, 00:00 IST</span>
+                </div>
                 <div className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50/80 px-3.5 py-2 text-sm font-semibold text-[#047857] shadow-xs">
                     <MapPin className="h-4 w-4 text-[#047857]" />
                     <span>Gurgaon</span>
-                    <span className="hidden sm:inline-block rounded-full bg-[#047857] px-2 py-0.5 text-[10px] font-bold text-white uppercase tracking-wide">
-                        API Grounded
-                    </span>
                 </div>
             </div>
         </div>

@@ -65,15 +65,19 @@ export function FilterBar({
         label: `${bhk} BHK`,
     }));
 
-    const priceDropdownOptions = priceOptions.map((opt) => ({
-        value: opt.value,
-        label: opt.label,
-    }));
+    const priceDropdownOptions = priceOptions
+        .filter((opt) => opt.value !== "")
+        .map((opt) => ({
+            value: opt.value,
+            label: opt.label,
+        }));
 
-    const furnishingDropdownOptions = FURNISHING_OPTIONS.map((f) => ({
-        value: f.value,
-        label: f.label,
-    }));
+    const furnishingDropdownOptions = FURNISHING_OPTIONS
+        .filter((f) => f.value !== "")
+        .map((f) => ({
+            value: f.value,
+            label: f.label,
+        }));
 
     return (
         <div className="w-full space-y-3.5">
@@ -137,7 +141,7 @@ export function FilterBar({
                     label="Price Range"
                     selectedValue={filters.priceRange}
                     options={priceDropdownOptions}
-                    placeholder="Any Budget"
+                    placeholder={priceOptions.find((o) => o.value === "")?.label || "Any Price"}
                     isOpen={openDropdown === "price"}
                     onToggle={() => toggleDropdown("price")}
                     onChange={(val) => onChange({ ...filters, priceRange: val })}

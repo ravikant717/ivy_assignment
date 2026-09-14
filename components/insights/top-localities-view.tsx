@@ -4,7 +4,6 @@ import React, { useState, useMemo } from "react";
 import {
     MapPin,
     ArrowUpRight,
-    Search,
     SlidersHorizontal,
     TrendingUp,
     Percent,
@@ -26,21 +25,11 @@ export function TopLocalitiesView({
     selectedLocality,
     onSelectLocality,
 }: TopLocalitiesViewProps) {
-    const [searchQuery, setSearchQuery] = useState("");
     const [sortBy, setSortBy] = useState<SortField>("demand");
 
-    // Filter and Sort localities
+    // Sort localities
     const processedLocalities = useMemo(() => {
-        let list = [...localities];
-
-        if (searchQuery.trim()) {
-            const q = searchQuery.toLowerCase().trim();
-            list = list.filter(
-                (l) =>
-                    l.locality.toLowerCase().includes(q) ||
-                    l.display_name.toLowerCase().includes(q)
-            );
-        }
+        const list = [...localities];
 
         list.sort((a, b) => {
             if (sortBy === "demand") {
@@ -62,11 +51,11 @@ export function TopLocalitiesView({
         });
 
         return list;
-    }, [localities, searchQuery, sortBy]);
+    }, [localities, sortBy]);
 
     return (
         <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-xs space-y-5">
-            {/* Header with Search & Sort controls */}
+            {/* Header with Sort controls */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-gray-100">
                 <div>
                     <h3 className="text-base font-bold text-gray-900">
@@ -77,40 +66,25 @@ export function TopLocalitiesView({
                     </p>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-2.5">
-                    {/* Search Locality input */}
-                    <div className="relative w-44 sm:w-52">
-                        <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
-                        <input
-                            type="text"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            placeholder="Search locality..."
-                            className="w-full rounded-lg border border-gray-200 bg-gray-50/50 py-1.5 pl-8 pr-3 text-xs text-gray-800 placeholder-gray-400 focus:border-[#047857] focus:bg-white focus:outline-none"
-                        />
-                    </div>
-
-                    {/* Sort Selector */}
-                    <div className="flex items-center gap-1.5 text-xs">
-                        <span className="text-gray-400 font-medium">Sort:</span>
-                        <select
-                            value={sortBy}
-                            onChange={(e) => setSortBy(e.target.value as SortField)}
-                            className="rounded-lg border border-gray-200 bg-white py-1.5 px-2.5 text-xs font-semibold text-gray-800 focus:border-[#047857] focus:outline-none cursor-pointer"
-                        >
-                            <option value="demand">By Demand (Searches)</option>
-                            <option value="price_sqft">By Rate (₹/sq ft)</option>
-                            <option value="yield">By Rental Yield (%)</option>
-                            <option value="growth">By YoY Growth (%)</option>
-                            <option value="units">By Total Inventory</option>
-                        </select>
-                    </div>
+                <div className="flex items-center gap-2 text-xs">
+                    <span className="text-gray-400 font-medium">Sort by:</span>
+                    <select
+                        value={sortBy}
+                        onChange={(e) => setSortBy(e.target.value as SortField)}
+                        className="rounded-lg border border-gray-200 bg-white py-1.5 px-2.5 text-xs font-semibold text-gray-800 focus:border-[#047857] focus:outline-none cursor-pointer"
+                    >
+                        <option value="demand">By Demand (Searches)</option>
+                        <option value="price_sqft">By Rate (₹/sq ft)</option>
+                        <option value="yield">By Rental Yield (%)</option>
+                        <option value="growth">By YoY Growth (%)</option>
+                        <option value="units">By Total Inventory</option>
+                    </select>
                 </div>
             </div>
 
             {/* Localities Comparison Table / Cards */}
-            <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
+            <div className="overflow-x-auto scrollbar-thin">
+                <table className="w-full text-left text-xs min-w-[760px]">
                     <thead>
                         <tr className="border-b border-gray-200 bg-gray-50/80 text-[11px] font-semibold text-gray-500">
                             <th className="py-2.5 px-3">Rank & Locality</th>
@@ -127,7 +101,7 @@ export function TopLocalitiesView({
                         {processedLocalities.length === 0 ? (
                             <tr>
                                 <td colSpan={8} className="py-6 text-center text-xs text-gray-400">
-                                    No localities match &quot;{searchQuery}&quot;
+                                    No localities available
                                 </td>
                             </tr>
                         ) : (

@@ -55,7 +55,7 @@ export function TopLocalitiesDemand({
                                 <div className="flex items-center gap-2.5 min-w-0">
                                     {/* Rank Badge */}
                                     <span
-                                        className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md text-[11px] font-bold ${
+                                        className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-[11px] font-bold ${
                                             isSelected
                                                 ? "bg-[#047857] text-white"
                                                 : "bg-emerald-50 text-[#047857]"
@@ -63,17 +63,22 @@ export function TopLocalitiesDemand({
                                     >
                                         {idx + 1}
                                     </span>
-                                    <span className="font-semibold truncate">
-                                        {loc.display_name}
-                                    </span>
+                                    <div className="min-w-0">
+                                        <span className="font-semibold text-gray-900 truncate block">
+                                            {loc.display_name}
+                                        </span>
+                                        <span className="text-[11px] text-gray-500 font-normal">
+                                            {loc.count} listings · ₹ {(loc.median_price / 10000000).toFixed(2)} Cr
+                                        </span>
+                                    </div>
                                 </div>
 
-                                <div className="flex items-center gap-3 shrink-0">
-                                    <span className="text-gray-400 font-medium">
-                                        {loc.searches}
-                                    </span>
-                                    <span className="flex items-center text-emerald-600 font-bold">
+                                <div className="flex flex-col items-end shrink-0">
+                                    <span className="flex items-center text-emerald-600 font-bold text-xs">
                                         ↑ {loc.growth}%
+                                    </span>
+                                    <span className="text-[10px] text-gray-400 font-medium">
+                                        {loc.searches}
                                     </span>
                                 </div>
                             </button>

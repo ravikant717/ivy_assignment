@@ -104,7 +104,7 @@ export function PropertyTypeDistribution({
                                     className="h-2.5 w-2.5 rounded-full shrink-0"
                                     style={{ backgroundColor: item.color }}
                                 />
-                                <span className="font-medium text-gray-700 truncate max-w-[110px]">
+                                <span className="font-medium text-gray-700">
                                     {item.type}
                                 </span>
                             </div>

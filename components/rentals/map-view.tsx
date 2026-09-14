@@ -54,3 +54,5 @@ export function RentalMapView({
         />
     );
 }
+
+export const MapView = RentalMapView;

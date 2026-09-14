@@ -4,7 +4,6 @@ import React from "react";
 import { Building, Layers, Maximize2 } from "lucide-react";
 import type { Project } from "@/types/project";
 import { getListingImage } from "@/lib/listing-images";
-import { FavoriteButton } from "@/components/common/favorite-button";
 import {
     formatLocality,
     formatProjectPriceRange,
@@ -37,17 +36,16 @@ export function ProjectCard({
         project.project_status?.toLowerCase() === "ready to move"
             ? "bg-emerald-50 text-[#047857]"
             : project.project_status?.toLowerCase() === "new launch"
-            ? "bg-purple-50 text-purple-700"
-            : "bg-amber-50 text-amber-700";
+                ? "bg-purple-50 text-purple-700"
+                : "bg-amber-50 text-amber-700";
 
     return (
         <article
             onClick={() => onSelect?.(project)}
-            className={`group relative flex cursor-pointer flex-col gap-4 rounded-2xl border bg-white p-3.5 shadow-sm transition duration-200 sm:flex-row sm:items-center sm:gap-5 hover:shadow-md ${
-                isSelected
+            className={`group relative flex cursor-pointer flex-col gap-4 rounded-2xl border bg-white p-3.5 shadow-sm transition duration-200 sm:flex-row sm:items-center sm:gap-5 hover:shadow-md ${isSelected
                     ? "border-[#047857] ring-2 ring-[#047857]/30 shadow-md"
                     : "border-gray-200 hover:border-gray-300"
-            }`}
+                }`}
         >
             {/* Left Image */}
             <div className="relative h-44 w-full shrink-0 overflow-hidden rounded-xl bg-gray-100 sm:h-40 sm:w-52 md:h-44 md:w-60">
@@ -80,12 +78,6 @@ export function ProjectCard({
                             </span>
                         )}
                     </div>
-
-                    <FavoriteButton
-                        isSaved={isSaved}
-                        onToggle={() => onToggleSave?.(project.project_id)}
-                        label="Save project"
-                    />
                 </div>
 
                 {/* Developer & Apartment Name */}

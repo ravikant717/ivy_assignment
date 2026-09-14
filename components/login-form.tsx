@@ -46,7 +46,7 @@ export function LoginForm({ className = "", onSuccess }: LoginFormProps) {
             if (onSuccess) {
                 onSuccess();
             } else {
-                router.push("/dashboard");
+                router.push("/listings");
                 router.refresh();
             }
         } catch (err) {
@@ -60,9 +60,44 @@ export function LoginForm({ className = "", onSuccess }: LoginFormProps) {
         }
     }
 
-    const fillDemoCredentials = () => {
+    const handleDemoLogin = async () => {
         setEmail("demo1@ivy.homes");
-        setPassword("b43deecd5d");
+        setPassword("");
+        setLoading(true);
+        setError("");
+
+        try {
+            const response = await fetch("/api/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    isDemo: true,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || "Failed to sign in with demo account");
+            }
+
+            if (onSuccess) {
+                onSuccess();
+            } else {
+                router.push("/listings");
+                router.refresh();
+            }
+        } catch (err) {
+            setError(
+                err instanceof Error
+                    ? err.message
+                    : "Something went wrong. Please try again."
+            );
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -90,14 +125,14 @@ export function LoginForm({ className = "", onSuccess }: LoginFormProps) {
                         htmlFor="email"
                         className="block text-xs font-semibold tracking-wide text-[#1f2937]"
                     >
-                        Email or username
+                        Email
                     </label>
                     <input
                         id="email"
                         name="email"
                         type="email"
                         autoComplete="email"
-                        placeholder="e.g. arjun@example.com"
+                        placeholder="e.g. ravi@example.com"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
@@ -171,15 +206,23 @@ export function LoginForm({ className = "", onSuccess }: LoginFormProps) {
 
             {/* Demo credentials card */}
             <div
-                onClick={fillDemoCredentials}
-                title="Click to auto-fill demo credentials"
+                role="button"
+                tabIndex={0}
+                onClick={handleDemoLogin}
+                onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        handleDemoLogin();
+                    }
+                }}
+                title="Click to sign in with demo account"
                 className="cursor-pointer rounded-xl border border-[#d8ebe3] bg-[#f0f7f5] p-4 transition-colors hover:bg-[#e7f3ef]"
             >
                 <h2 className="text-sm font-semibold text-[#111827]">
-                    Use demo credentials from your email
+                    Sign in with demo account
                 </h2>
                 <p className="mt-1 text-xs text-[#6b7280]">
-                    You’ll receive 3 demo accounts while registering.
+                    Instantly sign in using pre-configured demo credentials.
                 </p>
             </div>
         </div>

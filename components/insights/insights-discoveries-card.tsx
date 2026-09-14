@@ -42,9 +42,12 @@ export function InsightsDiscoveriesCard({ discoveries, city }: InsightsDiscoveri
                                 <Database className="h-2.5 w-2.5" />
                                 100% Grounded
                             </span>
+                            <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 border border-slate-200 px-2 py-0.5 text-[10px] font-semibold text-slate-700">
+                                ⚓ Reference: 2026-09-10T00:00:00+05:30 (IST)
+                            </span>
                         </div>
                         <p className="text-[11px] text-gray-500">
-                            Empirical analysis grounded directly in {city} raw files (3,500 listings, 1,320 rentals, 400 projects).
+                            Empirical analysis grounded directly in {city} raw files (3,500 listings, 1,320 rentals, 400 projects) anchored to fixed reference moment.
                         </p>
                     </div>
                 </div>
