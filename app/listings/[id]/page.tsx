@@ -6,6 +6,7 @@ import { ArrowLeft, X } from "lucide-react";
 import { Navbar } from "@/components/listings/navbar";
 import { Toast } from "@/components/common/toast";
 import { useToast } from "@/lib/hooks/use-toast";
+import { useFavourites } from "@/lib/hooks/use-favourites";
 import { useListingDetail } from "@/lib/hooks/use-listing-detail";
 import {
     PropertyGallery,
@@ -49,7 +50,8 @@ export default function SingleListingPage({ params }: SingleListingPageProps) {
     const [activeImageIndex, setActiveImageIndex] = useState(0);
     const [activeTab, setActiveTab] = useState<DetailTabType>("overview");
     const [isLightboxOpen, setIsLightboxOpen] = useState(false);
-    const [isSaved, setIsSaved] = useState(false);
+    const { isFavourite, toggleFavourite } = useFavourites();
+    const isSaved = isFavourite(listingId);
     const { toastMessage, showToast } = useToast();
 
     function handleShare() {
@@ -114,9 +116,14 @@ export default function SingleListingPage({ params }: SingleListingPageProps) {
                             propertyTitle={propertyTitle}
                             isRental={isRental}
                             isSaved={isSaved}
-                            onToggleSave={() => {
-                                setIsSaved(!isSaved);
-                                showToast(!isSaved ? "Listing saved to favorites!" : "Listing removed from favorites.");
+                            onToggleSave={async () => {
+                                const nextSaved = !isSaved;
+                                await toggleFavourite(listingId);
+                                showToast(
+                                    nextSaved
+                                        ? "Listing saved to favorites!"
+                                        : "Listing removed from favorites."
+                                );
                             }}
                             onShare={handleShare}
                         />

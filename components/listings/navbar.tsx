@@ -5,13 +5,17 @@ import Link from "next/link";
 import { ChevronDown, LogOut, User } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
 
+import { useFavourites } from "@/lib/hooks/use-favourites";
+
 interface NavbarProps {
     savedCount?: number;
     userName?: string;
     activeTab?: "listings" | "rentals" | "projects" | "insights" | "saved";
 }
 
-export function Navbar({ savedCount = 0, userName = "Ravikant", activeTab }: NavbarProps) {
+export function Navbar({ savedCount: propSavedCount, userName = "Ravikant", activeTab }: NavbarProps) {
+    const { count: liveSavedCount } = useFavourites();
+    const savedCount = propSavedCount !== undefined ? propSavedCount : liveSavedCount;
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const router = useRouter();
     const pathname = usePathname();

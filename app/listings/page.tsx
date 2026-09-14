@@ -16,11 +16,12 @@ import { PropertySkeleton } from "@/components/common/property-skeleton";
 import { PropertyErrorState } from "@/components/common/property-error-state";
 import { PropertyEmptyState } from "@/components/common/property-empty-state";
 import { LoadMoreFooter } from "@/components/common/load-more-footer";
+import { useFavourites } from "@/lib/hooks/use-favourites";
 
 export default function ListingsPage() {
-    // Active selection & favorites
+    // Active selection & persistent favorites
     const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
-    const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
+    const { favouriteIds, toggleFavourite } = useFavourites();
 
     // Filters & Sorting state
     const [filters, setFilters] = useState<FilterState>({
@@ -45,18 +46,6 @@ export default function ListingsPage() {
         refetch,
     } = useListings(filters, sort);
 
-    // Toggle saved/favorited status
-    function handleToggleSave(listingId: string) {
-        setSavedIds((prev) => {
-            const next = new Set(prev);
-            if (next.has(listingId)) {
-                next.delete(listingId);
-            } else {
-                next.add(listingId);
-            }
-            return next;
-        });
-    }
 
     // Filter loaded listings by search keyword if user entered one
     const filteredListings = useMemo(() => {
@@ -103,7 +92,7 @@ export default function ListingsPage() {
     return (
         <div className="min-h-screen bg-[#fafbfc] text-gray-900">
             {/* Top Navbar */}
-            <Navbar savedCount={savedIds.size} userName="Ravikant" activeTab="listings" />
+            <Navbar savedCount={favouriteIds.size} userName="Ravikant" activeTab="listings" />
 
             {/* Main Content Area */}
             <main className="mx-auto max-w-[1440px] px-6 py-6 md:px-10">
@@ -186,8 +175,8 @@ export default function ListingsPage() {
                                                 selectedListing?.listing_id ===
                                                 listing.listing_id
                                             }
-                                            isSaved={savedIds.has(listing.listing_id)}
-                                            onToggleSave={handleToggleSave}
+                                            isSaved={favouriteIds.has(listing.listing_id)}
+                                            onToggleSave={toggleFavourite}
                                             onSelect={(l) => setSelectedListing(l)}
                                         />
                                     ))}
