@@ -248,12 +248,13 @@ export async function resolveListingObjects(
             if (!("errorResponse" in apiResult) && apiResult.response.ok) {
                 const rawListing: Listing = await apiResult.response.json();
                 let price = Math.abs(Number(rawListing.price) || 0);
+                // Fix scaled-down prices (6 listings divided by 1000 in raw data)
+                if (price > 0 && price < 100000 && !rawListing.property_type?.toLowerCase().includes("rent")) {
+                    price = price * 1000;
+                }
                 const isRental =
                     rawListing.property_type?.toLowerCase().includes("rent") ||
                     price < 200000;
-                if (price > 0 && price < 100000 && !isRental) {
-                    price = price * 1000;
-                }
                 let carpet_area = Number(rawListing.carpet_area) || 0;
                 if ((rawListing.website?.toLowerCase() === "magichomes" && carpet_area < 350) || (carpet_area > 0 && carpet_area < 300)) {
                     carpet_area = Math.round(carpet_area * 10.7639);

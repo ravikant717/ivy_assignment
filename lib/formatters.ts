@@ -3,6 +3,29 @@
  */
 
 /**
+ * Normalizes listing prices in Indian Rupees (INR).
+ *
+ * Finding (submission.json):
+ * Exactly 6 listing records have prices recorded in thousands of INR
+ * (divided by 1000, e.g., 5200 instead of 52,00,000 for multi-bedroom properties).
+ *
+ * Evidence:
+ *  - 100-6000578: 14620 -> 14,620,000 (2 BHK)
+ *  - 100-6000678: 5030  -> 5,030,000  (1 BHK)
+ *  - 100-6001599: 26260 -> 26,260,000 (5 BHK)
+ *  - MAG-6002472: 8010  -> 8,010,000  (2 BHK)
+ *  - MAG-6002941: 17250 -> 17,250,000 (5 BHK)
+ *  - SQU-6000395: 17010 -> 17,010,000 (4 BHK)
+ */
+export function normalizeListingPrice(rawPrice: number | string | undefined | null): number {
+    let price = Math.abs(Number(rawPrice) || 0);
+    if (price > 0 && price < 100000) {
+        price = price * 1000;
+    }
+    return price;
+}
+
+/**
  * Formats property price into Indian currency notation:
  * - Rentals: ₹18,000 / month
  * - Under 1 Lakh: ₹X,XXX
@@ -90,6 +113,31 @@ export function formatLocality(
 }
 
 /**
+ * Normalizes property area measurements to square feet (sq ft).
+ *
+ * Finding (submission.json):
+ * Listings from MagicHomes (website: magichomes) report areas in square metres
+ * (approx. 70-140 sqm, < 350 sqm), requiring multiplication by 10.7639 for sq ft.
+ * Listings that are already in sq ft (>= 350) or from other websites are preserved.
+ *
+ * Evidence:
+ *  - MAG-6000002, MAG-6000014, MAG-6000030, MAG-6000055, MAG-6000434, MAG-6000794, MAG-6001288
+ */
+export function normalizeAreaToSqft(
+    area?: number | string | null,
+    website?: string | null
+): number {
+    const rawNum = Number(area);
+    if (!area || Number.isNaN(rawNum) || rawNum <= 0) {
+        return 0;
+    }
+    const isSqm =
+        (website?.toLowerCase() === "magichomes" && rawNum < 350) ||
+        (rawNum < 300 && rawNum > 30);
+    return isSqm ? Math.round(rawNum * 10.7639) : Math.round(rawNum);
+}
+
+/**
  * Formats carpet area with sq ft suffix:
  * Automatically normalizes MagicHomes sqm values (~70-130 sqm) to square feet.
  * e.g. 1160 -> "1,160 sq ft"
@@ -98,17 +146,10 @@ export function formatArea(
     carpetArea?: number | string | null,
     website?: string | null
 ): string {
-    const rawNum = Number(carpetArea);
-    if (!carpetArea || Number.isNaN(rawNum) || rawNum <= 0) {
+    const num = normalizeAreaToSqft(carpetArea, website);
+    if (num <= 0) {
         return "Area on Request";
     }
-
-    // Convert MagicHomes square metres (or suspicious < 300 sqm) to sq ft if not already converted
-    const isSqm =
-        (website?.toLowerCase() === "magichomes" && rawNum < 350) ||
-        (rawNum < 300 && rawNum > 30);
-    const num = isSqm ? Math.round(rawNum * 10.7639) : Math.round(rawNum);
-
     return `${num.toLocaleString("en-IN")} sq ft`;
 }
 
@@ -124,6 +165,39 @@ export function formatFurnishing(furnishing?: string | null): string {
         .trim()
         .replace(/[-_]/g, " ")
         .replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
+/**
+ * Normalizes mixed-denomination project prices into true integers in Indian Rupees (INR).
+ *
+ * Finding (submission.json):
+ * In /v1/projects, price_min and price_max are documented as integers in INR, but are
+ * actually floats in mixed denominations:
+ *  - values >= 10 are in Lakhs (x10^5)
+ *  - values < 10 are in Crores (x10^7)
+ *
+ * Evidence projects:
+ *  - P60004: price_min 94.6 (₹94.6 L) -> 9,460,000, price_max 2.15 (₹2.15 Cr) -> 21,500,000
+ *  - P60006: price_min 1.58 (₹1.58 Cr) -> 15,800,000, price_max 4.64 (₹4.64 Cr) -> 46,400,000
+ *  - P60008: price_min 1.36 (₹1.36 Cr) -> 13,600,000, price_max 2.59 (₹2.59 Cr) -> 25,900,000
+ *  - P60009: price_min 88.2 (₹88.2 L) -> 8,820,000, price_max 1.88 (₹1.88 Cr) -> 18,800,000
+ *  - P60060: price_min 1.57 (₹1.57 Cr) -> 15,700,000, price_max 5.83 (₹5.83 Cr) -> 58,300,000
+ */
+export function normalizeProjectPriceToRupees(raw?: number | null): number | null {
+    if (raw === undefined || raw === null || Number.isNaN(Number(raw)) || Number(raw) <= 0) {
+        return null;
+    }
+    const num = Number(raw);
+    // Already in raw rupees (> 100,000)
+    if (num >= 100000) {
+        return Math.round(num);
+    }
+    // Values >= 10 are in Lakhs (x10^5)
+    if (num >= 10) {
+        return Math.round(num * 100000);
+    }
+    // Values < 10 are in Crores (x10^7)
+    return Math.round(num * 10000000);
 }
 
 /**
@@ -185,3 +259,33 @@ export function formatAreaRange(
     return `${single!.toLocaleString("en-IN")} sq ft`;
 }
 
+/**
+ * Formats a listing's posted_at timestamp correctly.
+ *
+ * The API returns timestamps WITHOUT a timezone indicator (e.g. "2026-09-03T14:22:11"),
+ * but they represent IST (UTC+05:30) — not UTC. Passing a bare ISO string to `new Date()`
+ * makes JS treat it as UTC, shifting the time by -5h30m.
+ *
+ * Fix: append "+05:30" before parsing so the Date object holds the true instant.
+ *
+ * Examples:
+ *   "2026-09-03T14:22:11"  → "3 Sep 2026"
+ *   "2026-08-15T09:00:00"  → "15 Aug 2026"
+ */
+export function formatPostedAt(postedAt?: string | null): string {
+    if (!postedAt) return "—";
+
+    // Strip any existing trailing Z or offset, then re-attach the correct +05:30 offset
+    const bare = postedAt.replace(/Z$/, "").replace(/[+-]\d{2}:\d{2}$/, "");
+    const istString = `${bare}+05:30`;
+    const date = new Date(istString);
+
+    if (Number.isNaN(date.getTime())) return "—";
+
+    return date.toLocaleDateString("en-IN", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+        timeZone: "Asia/Kolkata",
+    });
+}

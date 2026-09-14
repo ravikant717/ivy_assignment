@@ -7,6 +7,9 @@ import type {
     BhkDistribution,
     MonthlyTrend,
 } from "@/lib/insights-data";
+import { isFakeListing } from "@/lib/constants/fake-listings";
+import { isCorruptListing } from "@/lib/constants/corrupt-listings";
+import { normalizeProjectPriceToRupees } from "@/lib/formatters";
 
 export interface DataDiscoveries {
     totalRecords: number;
@@ -15,6 +18,8 @@ export interface DataDiscoveries {
     inactiveCount: number;
     verifiedCount: number;
     verifiedPct: number;
+    fakeCount: number;
+    fakeVerifiedCount: number;
     corruptCount: number;
     corruptIds: string[];
     projectsTotal: number;
@@ -84,13 +89,14 @@ export function computeInsightsFromRaw(): AnalyticsSummary & { discoveries: Data
     const liveListings = listings.filter((l) => l.is_live);
     const verifiedListings = listings.filter((l) => l.is_verified);
 
-    // Corrupt listings: negative price, floor > total_floors, area <= 0
-    const corruptRecords = listings.filter((l) => {
-        const floorBad = l.floor > l.total_floors && l.total_floors > 0;
-        const areaBad = l.carpet_area <= 0;
-        const priceBad = l.price <= 0;
-        return floorBad || areaBad || priceBad;
-    });
+    // Fake listings: boilerplate description + ~35% below-market pricing.
+    // 69 of 79 fakes are is_verified: true — making is_verified an unreliable fraud signal.
+    const fakeListings = listings.filter((l) => isFakeListing(l.description));
+    const fakeVerifiedCount = fakeListings.filter((l) => l.is_verified).length;
+
+    // Corrupt listings: physically impossible data (negative price, floor > total_floors,
+    // carpet > super_built_up, swapped coordinates, 0-bedroom non-plot) — exactly 30 listings
+    const corruptRecords = listings.filter((l) => isCorruptListing(l));
 
     // Project discrepancy: count actual listings matching project_id vs project.total_listings
     const actualListingByProject: Record<string, number> = {};
@@ -109,27 +115,22 @@ export function computeInsightsFromRaw(): AnalyticsSummary & { discoveries: Data
     });
 
     // Costliest Project (unit-aware normalization: values >= 10 are Lakhs, values < 10 are Crores)
-    const normalizeProjectPrice = (raw?: number | null) => {
-        const num = Number(raw) || 0;
-        if (num <= 0) return 0;
-        return num >= 10 ? num * 100000 : num * 10000000;
-    };
     const costliest = [...projects].sort(
-        (a, b) => normalizeProjectPrice(b.price_max) - normalizeProjectPrice(a.price_max)
+        (a, b) => (normalizeProjectPriceToRupees(b.price_max) ?? 0) - (normalizeProjectPriceToRupees(a.price_max) ?? 0)
     )[0] || {
         project_id: "P60060",
         apartment_name: "Mantri Terraces",
         price_max: 5.83,
     };
 
-    // 2. Buy Pricing Stats (filter is_live and normalize MagicHomes sqm to sqft)
+    // 2. Buy Pricing Stats (filter is_live, exclude corrupt records, and normalize MagicHomes sqm to sqft & scaled-down prices)
     const validBuy = listings
-        .filter((l) => l.is_live && l.price > 0 && l.carpet_area > 0)
+        .filter((l) => l.is_live && !isCorruptListing(l) && Number(l.price) > 0 && Number(l.carpet_area) > 0)
         .map((l) => {
             let price = Math.abs(Number(l.price) || 0);
             if (price > 0 && price < 100000) price = price * 1000;
             let carpet_area = Number(l.carpet_area) || 0;
-            if (l.website?.toLowerCase() === "magichomes" || (carpet_area > 0 && carpet_area < 300)) {
+            if ((l.website?.toLowerCase() === "magichomes" && carpet_area < 350) || (carpet_area > 0 && carpet_area < 300)) {
                 carpet_area = Math.round(carpet_area * 10.7639);
             }
             return {
@@ -290,6 +291,8 @@ export function computeInsightsFromRaw(): AnalyticsSummary & { discoveries: Data
         inactiveCount: listings.length - liveListings.length,
         verifiedCount: verifiedListings.length,
         verifiedPct: Number(((verifiedListings.length / totalProp) * 100).toFixed(1)),
+        fakeCount: fakeListings.length,
+        fakeVerifiedCount,
         corruptCount: corruptRecords.length,
         corruptIds: corruptRecords.map((l) => l.listing_id),
         projectsTotal: projects.length,

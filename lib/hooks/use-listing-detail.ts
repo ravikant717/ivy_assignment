@@ -10,6 +10,7 @@ import {
     formatArea,
     formatFurnishing,
 } from "@/lib/formatters";
+import { isCorruptListing } from "@/lib/constants/corrupt-listings";
 
 export interface UseListingDetailReturn {
     listing: Listing | null;
@@ -93,6 +94,9 @@ export function useListingDetail(listingId: string): UseListingDetailReturn {
             })
             .then((data: Listing) => {
                 if (!isMounted) return;
+                if (isCorruptListing(data)) {
+                    throw new Error("This listing contains physically invalid specifications and is unavailable.");
+                }
                 const normalized = normalizeListing(data);
                 setListing(normalized);
                 setIsLoading(false);
@@ -105,7 +109,12 @@ export function useListingDetail(listingId: string): UseListingDetailReturn {
                         const items: Listing[] = Array.isArray(similarData)
                             ? similarData
                             : similarData.results || similarData.data || [];
-                        setSimilarListings(items.map(normalizeListing).slice(0, 10));
+                        setSimilarListings(
+                            items
+                                .filter((item) => !isCorruptListing(item))
+                                .map(normalizeListing)
+                                .slice(0, 10)
+                        );
                     })
                     .catch((err) => {
                         console.error("Failed to load similar listings:", err);
