@@ -1,7 +1,9 @@
 {
-  "demo1@ivy.homes": [],
+  "demo1@ivy.homes": [
+    "MAG-6001603",
+    "100-6000047"
+  ],
   "demo3@ivy.homes": [
-    "100-6000047",
     "MAG-6001603"
   ]
 }

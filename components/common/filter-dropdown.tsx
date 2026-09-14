@@ -66,7 +66,11 @@ export function FilterDropdown({
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, [isOpen, onToggle]);
 
-    const selectedOption = options.find((opt) => opt.value === selectedValue);
+    const blankOption = options.find((opt) => opt.value === "");
+    const effectivePlaceholder = placeholder || blankOption?.label;
+    const nonBlankOptions = options.filter((opt) => opt.value !== "");
+
+    const selectedOption = nonBlankOptions.find((opt) => opt.value === selectedValue);
     const isSelected = Boolean(selectedValue && selectedValue !== "");
     const displayLabel = selectedOption ? selectedOption.label : label;
 
@@ -97,7 +101,7 @@ export function FilterDropdown({
                 <div
                     className={`absolute left-0 top-full z-40 mt-1.5 ${menuWidth} max-h-64 overflow-y-auto rounded-2xl border border-gray-100 bg-white p-1.5 shadow-xl scrollbar-thin animate-in fade-in-50 zoom-in-95`}
                 >
-                    {placeholder && (
+                    {effectivePlaceholder && (
                         <button
                             type="button"
                             onClick={() => {
@@ -110,12 +114,12 @@ export function FilterDropdown({
                                     : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                             }`}
                         >
-                            <span>{placeholder}</span>
+                            <span>{effectivePlaceholder}</span>
                             {!isSelected && <Check className="h-3.5 w-3.5 text-[#047857]" />}
                         </button>
                     )}
 
-                    {options.map((option) => {
+                    {nonBlankOptions.map((option) => {
                         const isCurrent = option.value === selectedValue;
                         return (
                             <button

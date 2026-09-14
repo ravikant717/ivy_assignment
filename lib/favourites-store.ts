@@ -318,11 +318,11 @@ export async function resolveListingObjects(
             is_verified: true,
             is_live: true,
             description: `Saved property listing #${id}`,
-            posted_at: new Date().toISOString(),
+            posted_at: "2026-09-08T14:30:00+05:30",
             tag: "FOR RENT",
             image_url:
                 "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80",
-            saved_at: new Date().toISOString(),
+            saved_at: "2026-09-10T00:00:00+05:30",
         };
 
         results.push(fallbackListing);

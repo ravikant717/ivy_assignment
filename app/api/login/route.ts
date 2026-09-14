@@ -10,6 +10,22 @@ export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
 
+        let email = body.email;
+        let password = body.password;
+
+        // Secure server-side demo login so password is never exposed to client bundles
+        if (body.isDemo) {
+            email = process.env.IVY_EMAIL || "demo1@ivy.homes";
+            password = process.env.IVY_PASSWORD;
+        }
+
+        if (!email || !password) {
+            return NextResponse.json(
+                { message: "Email and password are required" },
+                { status: 400 }
+            );
+        }
+
         const baseUrl = getIvyBaseUrl();
         const apiKey = getIvyApiKey();
 
@@ -20,7 +36,7 @@ export async function POST(request: NextRequest) {
                 ...(apiKey ? { "X-API-Key": apiKey } : {}),
                 Accept: "application/json",
             },
-            body: JSON.stringify(body),
+            body: JSON.stringify({ email, password }),
             cache: "no-store",
         });
 

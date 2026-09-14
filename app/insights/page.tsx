@@ -14,6 +14,7 @@ import {
     InsightsDiscoveriesCard,
     DemandSupplyChart,
     TopLocalitiesView,
+    BhkDistribution,
 } from "@/components/insights";
 import { useInsightsData } from "@/lib/hooks/use-insights-data";
 
@@ -50,79 +51,98 @@ export default function InsightsPage() {
                 {/* 2. Top 4 Metric KPI Cards */}
                 <InsightsKpiCards data={data} />
 
-                {/* 3. Main Analytics Dashboard Layout */}
-                <div className="flex flex-col lg:flex-row gap-6 items-start">
-                    {/* Left/Main Column: Tabs + Dynamic Active Tab Content + Distribution + Demand */}
-                    <div className="flex-1 min-w-0 space-y-6">
-                        {/* Tab Navigation */}
-                        <InsightsTabs
-                            activeTab={activeTab}
-                            onTabChange={setActiveTab}
-                        />
+                {/* 3. Tab Navigation */}
+                <InsightsTabs
+                    activeTab={activeTab}
+                    onTabChange={setActiveTab}
+                />
 
-                        {/* Interactive Tab View Switching */}
-                        {activeTab === "Demand & Supply" ? (
-                            <DemandSupplyChart
-                                trends={data.demand_supply_trends}
-                                bhkDemand={data.demand_by_bhk}
-                            />
-                        ) : activeTab === "Top Localities" ? (
+                {/* 4. Primary Interactive Visualizations (Charts & Map) */}
+                {activeTab === "Top Localities" ? (
+                    <div className="flex flex-col xl:flex-row gap-6 items-start">
+                        <div className="flex-1 min-w-0 w-full">
                             <TopLocalitiesView
                                 localities={data.by_locality}
                                 selectedLocality={selectedLocality}
                                 onSelectLocality={handleSelectLocality}
                             />
-                        ) : (
-                            <PriceTrendChart
-                                trends={
-                                    activeTab === "Rental Trends"
-                                        ? data.rental_trends
-                                        : data.price_trends
-                                }
-                                isRent={activeTab === "Rental Trends"}
-                                propertyType={chartPropertyType}
-                                onPropertyTypeChange={setChartPropertyType}
-                                title={
-                                    activeTab === "Rental Trends"
-                                        ? "Average Rental Trends"
-                                        : "Average Price Trends"
-                                }
-                                subtitle={
-                                    activeTab === "Rental Trends"
-                                        ? "Track how monthly rental rates have changed over time in Gurgaon."
-                                        : "Track how property prices have changed over time in Gurgaon."
-                                }
-                            />
-                        )}
-
-                        {/* Two Sub-Cards Grid */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                            {/* Property Type Distribution Donut */}
-                            <PropertyTypeDistribution
-                                items={data.by_property_type}
-                                totalListings={data.total_listings}
-                                city={selectedCity}
-                            />
-
-                            {/* Top Localities by Demand */}
-                            <TopLocalitiesDemand
+                        </div>
+                        <div className="w-full xl:w-[420px] shrink-0">
+                            <PriceHeatmap
                                 localities={data.by_locality}
+                                city={selectedCity}
                                 selectedLocality={selectedLocality}
                                 onSelectLocality={handleSelectLocality}
-                                onViewAll={() => setActiveTab("Top Localities")}
                             />
                         </div>
                     </div>
+                ) : (
+                    <div className="flex flex-col lg:flex-row gap-6 items-start">
+                        <div className="flex-1 min-w-0 w-full">
+                            {activeTab === "Demand & Supply" ? (
+                                <DemandSupplyChart
+                                    trends={data.demand_supply_trends}
+                                    bhkDemand={data.demand_by_bhk}
+                                />
+                            ) : (
+                                <PriceTrendChart
+                                    trends={
+                                        activeTab === "Rental Trends"
+                                            ? data.rental_trends
+                                            : data.price_trends
+                                    }
+                                    isRent={activeTab === "Rental Trends"}
+                                    propertyType={chartPropertyType}
+                                    onPropertyTypeChange={setChartPropertyType}
+                                    title={
+                                        activeTab === "Rental Trends"
+                                            ? "Average Rental Trends"
+                                            : "Average Price Trends"
+                                    }
+                                    subtitle={
+                                        activeTab === "Rental Trends"
+                                            ? "Track how monthly rental rates have changed over time in Gurgaon."
+                                            : "Track how property prices have changed over time in Gurgaon."
+                                    }
+                                />
+                            )}
+                        </div>
 
-                    {/* Right Column: Price Heatmap Map */}
-                    <div className="w-full lg:w-[400px] xl:w-[450px] shrink-0 self-stretch">
-                        <PriceHeatmap
-                            localities={data.by_locality}
-                            city={selectedCity}
-                            selectedLocality={selectedLocality}
-                            onSelectLocality={handleSelectLocality}
-                        />
+                        {/* Right Column: Price Heatmap Map */}
+                        <div className="w-full lg:w-[400px] xl:w-[440px] shrink-0">
+                            <PriceHeatmap
+                                localities={data.by_locality}
+                                city={selectedCity}
+                                selectedLocality={selectedLocality}
+                                onSelectLocality={handleSelectLocality}
+                            />
+                        </div>
                     </div>
+                )}
+
+                {/* 5. Dedicated Full-Width Analytics Breakdown Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {/* BHK Configuration Breakdown (by_bhk) */}
+                    <BhkDistribution
+                        items={data.by_bhk}
+                        totalListings={data.total_listings}
+                        city={selectedCity}
+                    />
+
+                    {/* Property Type Distribution Donut */}
+                    <PropertyTypeDistribution
+                        items={data.by_property_type}
+                        totalListings={data.total_listings}
+                        city={selectedCity}
+                    />
+
+                    {/* Top Localities by Demand (by_locality) */}
+                    <TopLocalitiesDemand
+                        localities={data.by_locality}
+                        selectedLocality={selectedLocality}
+                        onSelectLocality={handleSelectLocality}
+                        onViewAll={() => setActiveTab("Top Localities")}
+                    />
                 </div>
 
                 {/* 4. Data Discoveries & Audit Findings */}

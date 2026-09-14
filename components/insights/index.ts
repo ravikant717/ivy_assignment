@@ -10,3 +10,4 @@ export { InsightsBanner } from "./insights-banner";
 export { InsightsDiscoveriesCard } from "./insights-discoveries-card";
 export { DemandSupplyChart } from "./demand-supply-chart";
 export { TopLocalitiesView } from "./top-localities-view";
+export { BhkDistribution } from "./bhk-distribution";

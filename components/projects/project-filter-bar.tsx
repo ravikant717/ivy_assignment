@@ -44,10 +44,12 @@ export function ProjectFilterBar({
         label: loc,
     }));
 
-    const statusOptions = PROJECT_STATUS_OPTIONS.map((s) => ({
-        value: s.value,
-        label: s.label,
-    }));
+    const statusOptions = PROJECT_STATUS_OPTIONS
+        .filter((s) => s.value !== "")
+        .map((s) => ({
+            value: s.value,
+            label: s.label,
+        }));
 
     return (
         <div className="w-full space-y-3.5">
