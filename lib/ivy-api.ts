@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
+    cleanBearerToken,
     getIvyApiKey,
     getIvyBaseUrl,
     getIvyTokensFromRequest,
@@ -66,7 +67,68 @@ export async function fetchIvyWithAutoRefresh(
 
     // Path 1: Access token missing from cookies, but refresh token exists
     if (!activeAccessToken) {
-        if (!refreshToken) {
+        if (refreshToken) {
+            const refreshResult = await refreshAccessToken(refreshToken);
+            if (refreshResult.success) {
+                activeAccessToken = refreshResult.accessToken;
+                refreshedTokens = {
+                    accessToken: refreshResult.accessToken,
+                    refreshToken: refreshResult.refreshToken,
+                };
+            }
+        }
+
+        // Fallback: If still no active token, check server environment credentials
+        if (!activeAccessToken) {
+            const baseUrl = getIvyBaseUrl();
+            const apiKey = getIvyApiKey();
+            const email = process.env.IVY_EMAIL;
+            const password = process.env.IVY_PASSWORD;
+
+            if (apiKey && email && password) {
+                try {
+                    const loginRes = await fetch(`${baseUrl}/auth/login`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-API-Key": apiKey,
+                        },
+                        body: JSON.stringify({ email, password }),
+                        cache: "no-store",
+                    });
+                    const loginStatus = loginRes.status;
+                    const loginBody = await loginRes.text();
+                    if (loginRes.ok) {
+                        const loginData = JSON.parse(loginBody);
+                        const token = loginData.access_token || loginData.token;
+                        if (token) {
+                            activeAccessToken = cleanBearerToken(token);
+                            refreshedTokens = {
+                                accessToken: activeAccessToken,
+                                refreshToken: cleanBearerToken(loginData.refresh_token || ""),
+                            };
+                        }
+                    } else {
+                        return {
+                            errorResponse: NextResponse.json(
+                                { error: "Authentication failed. Please login again." },
+                                { status: 401 }
+                            ),
+                        };
+                    }
+                } catch (e: any) {
+                    console.error("Fallback Ivy auth error:", e);
+                    return {
+                        errorResponse: NextResponse.json(
+                            { error: "Internal server error during authentication" },
+                            { status: 500 }
+                        ),
+                    };
+                }
+            }
+        }
+
+        if (!activeAccessToken) {
             return {
                 errorResponse: NextResponse.json(
                     { error: "Not logged in" },
@@ -74,25 +136,6 @@ export async function fetchIvyWithAutoRefresh(
                 ),
             };
         }
-
-        const refreshResult = await refreshAccessToken(refreshToken);
-        if (!refreshResult.success) {
-            return {
-                errorResponse: NextResponse.json(
-                    {
-                        error: "Session expired. Please login again.",
-                        details: refreshResult.data,
-                    },
-                    { status: 401 }
-                ),
-            };
-        }
-
-        activeAccessToken = refreshResult.accessToken;
-        refreshedTokens = {
-            accessToken: refreshResult.accessToken,
-            refreshToken: refreshResult.refreshToken,
-        };
     }
 
     // Upstream API call

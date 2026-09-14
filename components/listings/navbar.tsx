@@ -3,16 +3,30 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { ChevronDown, LogOut, User } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 interface NavbarProps {
     savedCount?: number;
     userName?: string;
+    activeTab?: "listings" | "rentals" | "projects" | "insights" | "saved";
 }
 
-export function Navbar({ savedCount = 0, userName = "Ravikant" }: NavbarProps) {
+export function Navbar({ savedCount = 0, userName = "Ravikant", activeTab }: NavbarProps) {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const router = useRouter();
+    const pathname = usePathname();
+
+    const currentTab = activeTab || (
+        pathname?.startsWith("/rentals")
+            ? "rentals"
+            : pathname?.startsWith("/projects")
+            ? "projects"
+            : pathname?.startsWith("/insights")
+            ? "insights"
+            : pathname?.startsWith("/saved")
+            ? "saved"
+            : "listings"
+    );
 
     async function handleLogout() {
         try {
@@ -49,33 +63,72 @@ export function Navbar({ savedCount = 0, userName = "Ravikant" }: NavbarProps) {
                     <nav className="hidden items-center gap-8 md:flex">
                         <Link
                             href="/listings"
-                            className="relative py-2 text-sm font-semibold text-gray-900"
+                            className={`relative py-2 text-sm transition ${
+                                currentTab === "listings"
+                                    ? "font-semibold text-gray-900"
+                                    : "font-medium text-gray-500 hover:text-gray-900"
+                            }`}
                         >
                             Listings
-                            {/* Green active indicator bar */}
-                            <span className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full bg-[#047857]" />
+                            {currentTab === "listings" && (
+                                <span className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full bg-[#047857]" />
+                            )}
+                        </Link>
+                        <Link
+                            href="/rentals"
+                            className={`relative py-2 text-sm transition ${
+                                currentTab === "rentals"
+                                    ? "font-semibold text-gray-900"
+                                    : "font-medium text-gray-500 hover:text-gray-900"
+                            }`}
+                        >
+                            Rentals
+                            {currentTab === "rentals" && (
+                                <span className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full bg-[#047857]" />
+                            )}
                         </Link>
                         <Link
                             href="/projects"
-                            className="py-2 text-sm font-medium text-gray-500 transition hover:text-gray-900"
+                            className={`relative py-2 text-sm transition ${
+                                currentTab === "projects"
+                                    ? "font-semibold text-gray-900"
+                                    : "font-medium text-gray-500 hover:text-gray-900"
+                            }`}
                         >
                             Projects
+                            {currentTab === "projects" && (
+                                <span className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full bg-[#047857]" />
+                            )}
                         </Link>
                         <Link
                             href="/insights"
-                            className="py-2 text-sm font-medium text-gray-500 transition hover:text-gray-900"
+                            className={`relative py-2 text-sm transition ${
+                                currentTab === "insights"
+                                    ? "font-semibold text-gray-900"
+                                    : "font-medium text-gray-500 hover:text-gray-900"
+                            }`}
                         >
                             Insights
+                            {currentTab === "insights" && (
+                                <span className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full bg-[#047857]" />
+                            )}
                         </Link>
                         <Link
                             href="/saved"
-                            className="flex items-center gap-1.5 py-2 text-sm font-medium text-gray-500 transition hover:text-gray-900"
+                            className={`flex items-center gap-1.5 relative py-2 text-sm transition ${
+                                currentTab === "saved"
+                                    ? "font-semibold text-gray-900"
+                                    : "font-medium text-gray-500 hover:text-gray-900"
+                            }`}
                         >
                             Saved
                             {savedCount > 0 && (
                                 <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-[#047857]">
                                     {savedCount}
                                 </span>
+                            )}
+                            {currentTab === "saved" && (
+                                <span className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full bg-[#047857]" />
                             )}
                         </Link>
                     </nav>

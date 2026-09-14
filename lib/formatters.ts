@@ -109,3 +109,63 @@ export function formatFurnishing(furnishing?: string | null): string {
         .replace(/[-_]/g, " ")
         .replace(/\b\w/g, (char) => char.toUpperCase());
 }
+
+/**
+ * Formats a project price. Handles units where price < 10 is Crores,
+ * 10 <= price < 1000 is Lakhs, and >= 100000 is raw rupees.
+ */
+export function formatProjectPrice(price?: number | null): string {
+    if (price === undefined || price === null || Number.isNaN(Number(price)) || Number(price) <= 0) {
+        return "Price on Request";
+    }
+    const num = Number(price);
+
+    // If raw rupees (> 1,000,000)
+    if (num >= 10000000) {
+        return `₹${(num / 10000000).toFixed(2).replace(/\.?0+$/, "")} Cr`;
+    }
+    if (num >= 100000) {
+        return `₹${(num / 100000).toFixed(1).replace(/\.?0+$/, "")} L`;
+    }
+    // If expressed in Lakhs (e.g. 78.9, 81.6, 94.6)
+    if (num >= 10) {
+        return `₹${num.toFixed(1).replace(/\.?0+$/, "")} L`;
+    }
+    // If expressed in Crores (e.g. 1.26, 1.66, 4.54)
+    return `₹${num.toFixed(2).replace(/\.?0+$/, "")} Cr`;
+}
+
+/**
+ * Formats min and max prices into a clean range:
+ * e.g. "₹1.66 Cr – ₹4.54 Cr" or "₹81.6 L – ₹2.25 Cr"
+ */
+export function formatProjectPriceRange(
+    minPrice?: number | null,
+    maxPrice?: number | null
+): string {
+    const minStr = minPrice ? formatProjectPrice(minPrice) : null;
+    const maxStr = maxPrice ? formatProjectPrice(maxPrice) : null;
+
+    if (!minStr && !maxStr) return "Price on Request";
+    if (minStr && maxStr && minStr !== maxStr) {
+        return `${minStr} – ${maxStr}`;
+    }
+    return (minStr || maxStr)!;
+}
+
+/**
+ * Formats min and max area into a clean sq ft range:
+ * e.g. "1,223 – 2,718 sq ft"
+ */
+export function formatAreaRange(
+    minArea?: number | null,
+    maxArea?: number | null
+): string {
+    if (!minArea && !maxArea) return "Area on Request";
+    if (minArea && maxArea && minArea !== maxArea) {
+        return `${minArea.toLocaleString("en-IN")} – ${maxArea.toLocaleString("en-IN")} sq ft`;
+    }
+    const single = minArea || maxArea;
+    return `${single!.toLocaleString("en-IN")} sq ft`;
+}
+
