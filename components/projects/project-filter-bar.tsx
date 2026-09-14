@@ -4,43 +4,29 @@ import React, { useState, useRef, useEffect } from "react";
 import {
     Search,
     MapPin,
-    Bed,
-    Tag,
-    Armchair,
+    Building2,
     ChevronDown,
     X,
 } from "lucide-react";
 import {
     GURGAON_LOCALITIES,
-    BEDROOM_OPTIONS,
-    FURNISHING_OPTIONS,
-    PRICE_FILTER_OPTIONS,
-    type PriceFilterOption,
+    PROJECT_STATUS_OPTIONS,
 } from "@/lib/constants/filters";
+import type { ProjectFilterState } from "@/lib/hooks/use-projects";
 
-export interface FilterState {
-    search: string;
-    locality: string;
-    bedroom: string;
-    priceRange: string;
-    furnishing: string;
-}
-
-interface FilterBarProps {
-    filters: FilterState;
-    onChange: (filters: FilterState) => void;
+interface ProjectFilterBarProps {
+    filters: ProjectFilterState;
+    onChange: (filters: ProjectFilterState) => void;
     onReset: () => void;
     availableLocalities?: readonly string[] | string[];
-    priceOptions?: PriceFilterOption[];
 }
 
-export function FilterBar({
+export function ProjectFilterBar({
     filters,
     onChange,
     onReset,
     availableLocalities = GURGAON_LOCALITIES,
-    priceOptions = PRICE_FILTER_OPTIONS,
-}: FilterBarProps) {
+}: ProjectFilterBarProps) {
     const [openDropdown, setOpenDropdown] = useState<string | null>(null);
     const containerRef = useRef<HTMLDivElement>(null);
 
@@ -64,14 +50,12 @@ export function FilterBar({
 
     const hasActiveFilters =
         filters.locality !== "" ||
-        filters.bedroom !== "" ||
-        filters.priceRange !== "" ||
-        filters.furnishing !== "" ||
+        filters.status !== "" ||
         filters.search !== "";
 
-    const selectedPriceLabel =
-        priceOptions.find((p) => p.value === filters.priceRange)?.label ||
-        "Price Range";
+    const selectedStatusLabel =
+        PROJECT_STATUS_OPTIONS.find((s) => s.value === filters.status)?.label ||
+        "Project Status";
 
     return (
         <div ref={containerRef} className="w-full space-y-3.5">
@@ -84,7 +68,7 @@ export function FilterBar({
                     onChange={(e) =>
                         onChange({ ...filters, search: e.target.value })
                     }
-                    placeholder="Search locality, landmark or keyword..."
+                    placeholder="Search by project name, developer, locality, or amenities..."
                     className="w-full bg-transparent px-3 py-1.5 text-sm text-gray-800 placeholder-gray-400 outline-none"
                 />
                 {filters.search && (
@@ -135,7 +119,7 @@ export function FilterBar({
                                     !filters.locality
                                         ? "bg-emerald-50 text-[#047857]"
                                         : "text-gray-700 hover:bg-gray-50"
-                                }`}
+                                    }`}
                             >
                                 All Localities
                             </button>
@@ -148,8 +132,7 @@ export function FilterBar({
                                         setOpenDropdown(null);
                                     }}
                                     className={`w-full rounded-lg px-3 py-1.5 text-left text-xs font-medium transition ${
-                                        filters.locality.toLowerCase() ===
-                                        loc.toLowerCase()
+                                        filters.locality.toLowerCase() === loc.toLowerCase()
                                             ? "bg-emerald-50 text-[#047857]"
                                             : "text-gray-700 hover:bg-gray-50"
                                     }`}
@@ -161,130 +144,34 @@ export function FilterBar({
                     )}
                 </div>
 
-                {/* Bedrooms Dropdown */}
+                {/* Project Status Dropdown */}
                 <div className="relative">
                     <button
                         type="button"
-                        onClick={() => toggleDropdown("bedroom")}
+                        onClick={() => toggleDropdown("status")}
                         className={`flex items-center gap-2 rounded-xl border px-3.5 py-2 text-xs font-medium transition ${
-                            filters.bedroom
+                            filters.status
                                 ? "border-[#047857] bg-emerald-50/60 text-[#047857]"
                                 : "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
                         }`}
                     >
-                        <Bed className="h-3.5 w-3.5 text-gray-500" />
-                        <span>
-                            {filters.bedroom ? `${filters.bedroom} BHK` : "Bedrooms"}
-                        </span>
+                        <Building2 className="h-3.5 w-3.5 text-gray-500" />
+                        <span>{selectedStatusLabel}</span>
                         <ChevronDown className="h-3.5 w-3.5 text-gray-400" />
                     </button>
 
-                    {openDropdown === "bedroom" && (
-                        <div className="absolute left-0 top-full z-30 mt-1.5 w-44 rounded-xl border border-gray-100 bg-white p-2 shadow-xl">
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    onChange({ ...filters, bedroom: "" });
-                                    setOpenDropdown(null);
-                                }}
-                                className={`w-full rounded-lg px-3 py-1.5 text-left text-xs font-medium transition ${
-                                    !filters.bedroom
-                                        ? "bg-emerald-50 text-[#047857]"
-                                        : "text-gray-700 hover:bg-gray-50"
-                                }`}
-                            >
-                                Any Bedrooms
-                            </button>
-                            {BEDROOM_OPTIONS.map((bhk) => (
-                                <button
-                                    key={bhk}
-                                    type="button"
-                                    onClick={() => {
-                                        onChange({ ...filters, bedroom: bhk });
-                                        setOpenDropdown(null);
-                                    }}
-                                    className={`w-full rounded-lg px-3 py-1.5 text-left text-xs font-medium transition ${
-                                        filters.bedroom === bhk
-                                            ? "bg-emerald-50 text-[#047857]"
-                                            : "text-gray-700 hover:bg-gray-50"
-                                    }`}
-                                >
-                                    {bhk} BHK
-                                </button>
-                            ))}
-                        </div>
-                    )}
-                </div>
-
-                {/* Price Range Dropdown */}
-                <div className="relative">
-                    <button
-                        type="button"
-                        onClick={() => toggleDropdown("priceRange")}
-                        className={`flex items-center gap-2 rounded-xl border px-3.5 py-2 text-xs font-medium transition ${
-                            filters.priceRange
-                                ? "border-[#047857] bg-emerald-50/60 text-[#047857]"
-                                : "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
-                        }`}
-                    >
-                        <Tag className="h-3.5 w-3.5 text-gray-500" />
-                        <span>{selectedPriceLabel}</span>
-                        <ChevronDown className="h-3.5 w-3.5 text-gray-400" />
-                    </button>
-
-                    {openDropdown === "priceRange" && (
+                    {openDropdown === "status" && (
                         <div className="absolute left-0 top-full z-30 mt-1.5 w-52 rounded-xl border border-gray-100 bg-white p-2 shadow-xl">
-                            {priceOptions.map((opt) => (
+                            {PROJECT_STATUS_OPTIONS.map((opt) => (
                                 <button
                                     key={opt.value}
                                     type="button"
                                     onClick={() => {
-                                        onChange({ ...filters, priceRange: opt.value });
+                                        onChange({ ...filters, status: opt.value });
                                         setOpenDropdown(null);
                                     }}
                                     className={`w-full rounded-lg px-3 py-1.5 text-left text-xs font-medium transition ${
-                                        filters.priceRange === opt.value
-                                            ? "bg-emerald-50 text-[#047857]"
-                                            : "text-gray-700 hover:bg-gray-50"
-                                    }`}
-                                >
-                                    {opt.label}
-                                </button>
-                            ))}
-                        </div>
-                    )}
-                </div>
-
-                {/* Furnishing Dropdown */}
-                <div className="relative">
-                    <button
-                        type="button"
-                        onClick={() => toggleDropdown("furnishing")}
-                        className={`flex items-center gap-2 rounded-xl border px-3.5 py-2 text-xs font-medium transition ${
-                            filters.furnishing
-                                ? "border-[#047857] bg-emerald-50/60 text-[#047857]"
-                                : "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
-                        }`}
-                    >
-                        <Armchair className="h-3.5 w-3.5 text-gray-500" />
-                        <span className="capitalize">
-                            {filters.furnishing || "Furnishing"}
-                        </span>
-                        <ChevronDown className="h-3.5 w-3.5 text-gray-400" />
-                    </button>
-
-                    {openDropdown === "furnishing" && (
-                        <div className="absolute left-0 top-full z-30 mt-1.5 w-48 rounded-xl border border-gray-100 bg-white p-2 shadow-xl">
-                            {FURNISHING_OPTIONS.map((opt) => (
-                                <button
-                                    key={opt.value}
-                                    type="button"
-                                    onClick={() => {
-                                        onChange({ ...filters, furnishing: opt.value });
-                                        setOpenDropdown(null);
-                                    }}
-                                    className={`w-full rounded-lg px-3 py-1.5 text-left text-xs font-medium transition ${
-                                        filters.furnishing === opt.value
+                                        filters.status === opt.value
                                             ? "bg-emerald-50 text-[#047857]"
                                             : "text-gray-700 hover:bg-gray-50"
                                     }`}

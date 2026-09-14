@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import type { Listing } from "@/types/listing";
+import type { Rental, RentalsApiResponse } from "@/types/rental";
 import type { FilterState } from "@/components/listings/filter-bar";
 import {
     getNextOffsetPageParam,
@@ -16,43 +16,29 @@ import {
 
 export type { SortOption };
 
-export type ListingsApiResponse = {
-    results: Listing[];
-    total: number;
-    count: number;
-    offset: number;
-    limit: number;
-    has_more: boolean;
-};
-
-/**
- * Standard TanStack Query Key Factory for Listings
- */
-export const listingsKeys = {
-    all: ["listings"] as const,
-    lists: () => [...listingsKeys.all, "list"] as const,
+export const rentalKeys = {
+    all: ["rentals"] as const,
+    lists: () => [...rentalKeys.all, "list"] as const,
     list: (filters: FilterState, sort: SortOption) =>
-        [...listingsKeys.lists(), { filters, sort }] as const,
+        [...rentalKeys.lists(), { filters, sort }] as const,
 };
 
-/**
- * Builds standard query string from filter state and sort config.
- */
-export function buildListingsQuery(
+export function buildRentalQuery(
     offset: number,
     filters: FilterState,
     sort: SortOption
 ): string {
     const params = new URLSearchParams();
+
     params.set("offset", String(offset));
     params.set("limit", "50");
 
-    if (filters.locality) {
+    if (filters.locality?.trim()) {
         params.set("locality", filters.locality.trim().toLowerCase());
     }
 
     if (filters.bedroom) {
-        params.set("bedroom", filters.bedroom); // Mapped to bhk in /api/listings proxy
+        params.set("bedroom", filters.bedroom);
     }
 
     if (filters.furnishing) {
@@ -80,55 +66,55 @@ export function buildListingsQuery(
     return params.toString();
 }
 
-async function fetchListingsPage(
+async function fetchRentalPage(
     offset: number,
     filters: FilterState,
     sort: SortOption
-): Promise<ListingsApiResponse> {
-    const query = buildListingsQuery(offset, filters, sort);
-    const response = await fetch(`/api/listings?${query}`, {
+): Promise<RentalsApiResponse> {
+    const query = buildRentalQuery(offset, filters, sort);
+
+    const response = await fetch(`/api/rentals?${query}`, {
         method: "GET",
         cache: "no-store",
     });
 
     if (!response.ok) {
-        throw new Error("Failed to fetch listings from server");
+        throw new Error("Failed to fetch rentals from server");
     }
 
     return response.json();
 }
 
-export function useListings(filters: FilterState, sort: SortOption) {
+export function useRentals(filters: FilterState, sort: SortOption = "relevance") {
     const queryKey = useMemo(
-        () => listingsKeys.list(filters, sort),
+        () => rentalKeys.list(filters, sort),
         [filters, sort]
     );
 
     const query = useInfiniteQuery({
         queryKey,
         queryFn: ({ pageParam = 0 }) =>
-            fetchListingsPage(pageParam as number, filters, sort),
+            fetchRentalPage(pageParam as number, filters, sort),
         initialPageParam: 0,
         getNextPageParam: getNextOffsetPageParam,
-        staleTime: 1000 * 60 * 5, // 5 minutes cache validity
+        staleTime: 1000 * 60 * 5,
     });
 
-    // Flatten and deduplicate listings across loaded pages, sanitizing negative prices
-    const listings = useMemo(
+    const rentals = useMemo(
         () =>
-            deduplicatePagesById(query.data?.pages, "listing_id", (item) => ({
-                ...item,
-                price: Math.abs(Number(item.price) || 0),
-            })),
+            deduplicatePagesById(query.data?.pages, "listing_id", (rental) => ({
+                ...rental,
+                price: Math.max(0, Number(rental.price) || 0),
+            })).filter((r) => r.is_live !== false),
         [query.data?.pages]
     );
 
-    const totalListings = query.data?.pages[0]?.total ?? listings.length;
+    const totalRentals = query.data?.pages[0]?.total ?? rentals.length;
 
     return {
         ...query,
-        listings,
-        totalListings,
+        rentals,
+        totalRentals,
         hasMore: Boolean(query.hasNextPage),
         loadMore: query.fetchNextPage,
         isLoadingMore: query.isFetchingNextPage,
