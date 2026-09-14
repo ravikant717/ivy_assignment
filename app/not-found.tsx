@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 
-export default function RootPage() {
+export default function NotFound() {
   useEffect(() => {
     window.location.replace("/login");
   }, []);

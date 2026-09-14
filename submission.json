@@ -2,7 +2,7 @@
   "api_key": "IVY26-XXXXXXXXXXXX",
   "candidate": {
     "name": "Ravikant Munda",
-    "email": "rxn114392@gmail.com",
+    "email": "ravikant.munda@proton.me",
     "repo_url": "https://github.com/ravikant717/ivy_assignment",
     "demo_url": "XXXXXXXXXXXX"
   },
@@ -60,75 +60,75 @@
       "100-6002104",
       "100-6002112",
       "100-6002359",
-      "100-6002444",
-      "100-6002766",
+      "100-6002445",
       "100-6002836",
-      "100-6003276",
-      "DWE-6000454",
-      "DWE-6000552",
-      "DWE-6000676",
-      "DWE-6000678",
-      "DWE-6000827",
+      "100-6003047",
+      "100-6003373",
+      "DWE-6000429",
+      "DWE-6000718",
+      "DWE-6000766",
+      "DWE-6000832",
+      "DWE-6001111",
       "DWE-6001133",
-      "DWE-6001550",
-      "DWE-6001594",
-      "DWE-6001712",
-      "DWE-6001716",
-      "DWE-6001768",
-      "DWE-6001886",
-      "DWE-6002047",
-      "DWE-6002058",
-      "DWE-6002598",
-      "DWE-6003180",
-      "DWE-6003282",
-      "DWE-6003323",
-      "MAG-6000087",
-      "MAG-6000350",
-      "MAG-6000352",
-      "MAG-6000720",
-      "MAG-6000787",
-      "MAG-6000898",
-      "MAG-6001402",
-      "MAG-6001423",
-      "MAG-6001548",
-      "MAG-6001633",
-      "MAG-6001799",
-      "MAG-6002787",
+      "DWE-6001171",
+      "DWE-6001238",
+      "DWE-6001343",
+      "DWE-6002296",
+      "DWE-6002518",
+      "DWE-6002551",
+      "DWE-6002629",
+      "DWE-6002709",
+      "DWE-6002809",
+      "DWE-6002998",
+      "DWE-6003329",
+      "DWE-6003397",
+      "MAG-6000097",
+      "MAG-6000246",
+      "MAG-6000401",
+      "MAG-6001104",
+      "MAG-6001460",
+      "MAG-6002034",
+      "MAG-6002105",
+      "MAG-6002232",
+      "MAG-6002508",
       "MAG-6003042",
-      "MAG-6003055",
-      "MAG-6003460",
-      "SQU-6000101",
-      "SQU-6000574",
-      "SQU-6000894",
-      "SQU-6001137",
-      "SQU-6001306",
-      "SQU-6001344",
-      "SQU-6001464",
-      "SQU-6001557",
-      "SQU-6001676",
-      "SQU-6002102",
-      "SQU-6002195",
-      "SQU-6002220",
-      "SQU-6002251",
-      "SQU-6002253",
-      "SQU-6002517",
-      "SQU-6002621",
-      "SQU-6002622",
-      "SQU-6002693",
-      "SQU-6002958",
-      "SQU-6003022",
-      "SQU-6003429",
-      "ZER-6000366",
-      "ZER-6000767",
-      "ZER-6001072",
-      "ZER-6001140",
-      "ZER-6001221",
-      "ZER-6001546",
-      "ZER-6001990",
+      "MAG-6003136",
+      "MAG-6003139",
+      "MAG-6003146",
+      "MAG-6003166",
+      "MAG-6003326",
+      "MAG-6003442",
+      "SQU-6000096",
+      "SQU-6000388",
+      "SQU-6000619",
+      "SQU-6000637",
+      "SQU-6000835",
+      "SQU-6001280",
+      "SQU-6001420",
+      "SQU-6001428",
+      "SQU-6001536",
+      "SQU-6001596",
+      "SQU-6001930",
+      "SQU-6001989",
+      "SQU-6002322",
+      "SQU-6002433",
+      "SQU-6002660",
+      "SQU-6002882",
+      "SQU-6003112",
+      "ZER-6000509",
+      "ZER-6000608",
+      "ZER-6000998",
+      "ZER-6001757",
       "ZER-6002002",
-      "ZER-6002228",
-      "ZER-6002380",
-      "ZER-6003157"
+      "ZER-6002088",
+      "ZER-6002124",
+      "ZER-6002438",
+      "ZER-6002881",
+      "ZER-6003105",
+      "ZER-6003132",
+      "ZER-6003234",
+      "ZER-6003347",
+      "ZER-6003450"
     ],
     "projects_with_wrong_listing_count": 295
   },
@@ -138,27 +138,60 @@
       "category": "auth",
       "documented": "API key passed as query parameter ?api_key=...",
       "actual": "Returns 401 Unauthorized ('send your key in the X-API-Key request header'). The key must be passed via the X-API-Key HTTP header.",
-      "how_found": "Sent initial GET request with ?api_key= query param and observed 401 response.",
+      "how_found": "Sent initial GET request with ?api_key= query param and observed 401 response requiring the X-API-Key header.",
       "impact": "All requests following the documented query parameter approach fail authentication.",
-      "evidence": []
+      "evidence": [
+        {
+          "request": "GET /v1/listings?api_key=IVY26-980448048EC2",
+          "status": 401,
+          "response": {
+            "detail": "send your key in the X-API-Key request header, not as a query parameter"
+          }
+        }
+      ]
     },
     {
       "endpoint": "/auth/login",
       "category": "auth",
-      "documented": "Session tokens are valid for 24 hours (86400s) with no refresh mechanism mentioned.",
-      "actual": "Access tokens expire in 900s (15 minutes). The response includes a refresh_token for renewal.",
-      "how_found": "Inspected JSON response from POST /auth/login and noted expires_in is 900.",
+      "documented": "Session tokens are valid for 24 hours (86400s) with no refresh flow.",
+      "actual": "Access tokens expire in 900s (15 minutes). The response includes a refresh_token and refresh_url for token renewal.",
+      "how_found": "Inspected JSON response from POST /auth/login and confirmed expires_in is 900.",
       "impact": "User sessions fail after 15 minutes unless an automated token refresh flow is implemented.",
-      "evidence": []
+      "evidence": [
+        {
+          "detail": "access token expired - POST /auth/refresh with your refresh_token"
+        },
+        {
+          "access_token": "eyJleHAiOjE3ODkzOTcwNDYsImlhdCI6MTc4OTM5NjE0Niwia2V5IjoiSVZZMjYtOTgwNDQ4MDQ4RUMyIiwic3ViIjoiZGVtbzFAaXZ5LmhvbWVzIiwidHlwIjoiYWNjZXNzIn0.MkYrlpoRdiGKgkRNhpwJ7C-OYHlv10YimRB3Wg8oTIQ",
+          "refresh_token": "eyJleHAiOjE3OTAwMDA5NDYsImlhdCI6MTc4OTM5NjE0Niwia2V5IjoiSVZZMjYtOTgwNDQ4MDQ4RUMyIiwic3ViIjoiZGVtbzFAaXZ5LmhvbWVzIiwidHlwIjoicmVmcmVzaCJ9.M-vXdV8a4jDCiVmh1rPN79LjBNCilGO3DQ_qcBlrRvI",
+          "token_type": "Bearer",
+          "expires_in": 900,
+          "refresh_url": "/auth/refresh",
+          "user": {
+            "email": "demo1@ivy.homes"
+          }
+        }
+      ]
     },
     {
       "endpoint": "/auth/refresh",
       "category": "undocumented_endpoint",
-      "documented": "Endpoint is not documented anywhere in API_REFERENCE.md.",
+      "documented": "Endpoint is not documented anywhere in API_REFERENCE.md (which explicitly states 'there is no refresh flow').",
       "actual": "Accepts POST with JSON {'refresh_token': '...'} and issues a refreshed access_token.",
-      "how_found": "Observed refresh_token in login payload and tested /auth/refresh with it.",
+      "how_found": "Observed refresh_token and refresh_url in login payload and successfully renewed session via POST /auth/refresh.",
       "impact": "Essential for sustaining user authentication beyond 15 minutes without re-prompting credentials.",
-      "evidence": []
+      "evidence": [
+        {
+          "access_token": "eyJleHAiOjE3ODkzOTcxNDYsImlhdCI6MTc4OTM5NjI0Niwia2V5IjoiSVZZMjYtOTgwNDQ4MDQ4RUMyIiwic3ViIjoiZGVtbzFAaXZ5LmhvbWVzIiwidHlwIjoiYWNjZXNzIn0.QrpT7tbFRHcJOIqnnZAIKiZ9XaF3vSPRg-ZvacefJRo",
+          "refresh_token": "eyJleHAiOjE3OTAwMDEwNDYsImlhdCI6MTc4OTM5NjI0Niwia2V5IjoiSVZZMjYtOTgwNDQ4MDQ4RUMyIiwic3ViIjoiZGVtbzFAaXZ5LmhvbWVzIiwidHlwIjoicmVmcmVzaCJ9.qo84QbQT1W7WakRikZFqCF_RQwfrMJUdkOrWWp3Dt24",
+          "token_type": "Bearer",
+          "expires_in": 900,
+          "refresh_url": "/auth/refresh",
+          "user": {
+            "email": "demo1@ivy.homes"
+          }
+        }
+      ]
     },
     {
       "endpoint": "/v1/*",
@@ -167,26 +200,38 @@
       "actual": "Pagination uses 0-indexed 'offset' and 'limit'. 'page' is completely ignored, and 'limit' is capped at 50.",
       "how_found": "Querying with ?page=2 returned offset 0 results, while ?limit=100 only returned 50 records.",
       "impact": "Applications using page-based pagination get stuck on the first 50 results.",
-      "evidence": []
+      "evidence": [
+        {
+          "request": "GET /v1/listings?page=2&limit=100",
+          "status": 200,
+          "response": {
+            "limit": 50,
+            "offset": 0,
+            "count": 50,
+            "total": 3200,
+            "has_more": true
+          }
+        }
+      ]
     },
     {
       "endpoint": "/v1/listings",
       "category": "completeness",
       "documented": "The 'total' response field represents the exact retrievable count (3200), and only active listings are returned.",
       "actual": "The API reports total: 3200 on every page, but paging until has_more is false yields 3500 listings. Furthermore, 708 returned listings have is_live: false.",
-      "how_found": "Continued pagination beyond offset 3200 up to offset 3450 with has_more: false.",
+      "how_found": "Continued pagination beyond offset 3200 up to offset 3450 with has_more: false, and audited is_live flags across all returned items.",
       "impact": "Clients stopping at reported total miss 300 records; inactive listings are served unless filtered client-side.",
       "evidence": [
-        "100-6000004",
-        "100-6003201",
-        "100-6003202",
-        "100-6003203",
-        "100-6003204",
-        "100-6003205",
-        "100-6003206",
-        "100-6003207",
-        "DWE-6000007",
-        "MAG-6000002"
+        "SQU-6001937",
+        "DWE-6002796",
+        "MAG-6000794",
+        "SQU-6003155",
+        "SQU-6000987",
+        "SQU-6000737",
+        "DWE-6002177",
+        "DWE-6002689",
+        "100-6001196",
+        "MAG-6001288"
       ]
     },
     {
@@ -204,7 +249,9 @@
         "R6001211",
         "R6001212",
         "R6001213",
-        "R6001214"
+        "R6001214",
+        "R6001215",
+        "R6001216"
       ]
     },
     {
@@ -223,7 +270,8 @@
         "P60372",
         "P60373",
         "P60374",
-        "P60375"
+        "P60375",
+        "P60376"
       ]
     },
     {
@@ -234,13 +282,16 @@
       "how_found": "Observed suspiciously small carpet areas (70-130) on 2-3 BHK units exclusively on MagicHomes listings.",
       "impact": "Area and price-per-sqft calculations are distorted by an order of magnitude if not converted.",
       "evidence": [
-        "MAG-6000002",
-        "MAG-6000014",
-        "MAG-6000030",
-        "MAG-6000055",
         "MAG-6000434",
         "MAG-6000794",
-        "MAG-6001288"
+        "MAG-6001288",
+        "MAG-6002640",
+        "MAG-6001630",
+        "MAG-6002414",
+        "MAG-6000554",
+        "MAG-6002733",
+        "MAG-6002350",
+        "MAG-6002328"
       ]
     },
     {
@@ -251,12 +302,12 @@
       "how_found": "Identified listings with non-zero prices under 50,000 INR for multi-bedroom properties.",
       "impact": "Sorting, range filtering, and average pricing computations become skewed by these 6 records.",
       "evidence": [
-        "100-6000578",
-        "100-6000678",
-        "100-6001599",
         "MAG-6002472",
+        "SQU-6000395",
         "MAG-6002941",
-        "SQU-6000395"
+        "100-6001599",
+        "100-6000578",
+        "100-6000678"
       ]
     },
     {
@@ -268,9 +319,9 @@
       "impact": "Projects appear drastically under-priced unless properly normalized to INR.",
       "evidence": [
         "P60004",
+        "P60005",
         "P60006",
         "P60008",
-        "P60009",
         "P60060"
       ]
     },
@@ -312,26 +363,26 @@
       "how_found": "Analyzed description text clusters and detected repetitive boilerplate text patterns correlated with severe pricing discounts.",
       "impact": "Clients relying on is_verified to filter genuine properties will display fraudulent clickbait listings.",
       "evidence": [
-        "100-6000114",
-        "100-6000228",
         "100-6000320",
-        "100-6000439",
-        "100-6000858",
-        "100-6001043",
-        "100-6001126",
-        "100-6002104",
-        "100-6002112",
-        "100-6002359",
-        "100-6002444",
-        "100-6002766",
         "100-6002836",
-        "100-6003276",
-        "DWE-6000454",
-        "DWE-6000552",
-        "DWE-6000676",
-        "DWE-6000678",
-        "DWE-6000827",
-        "DWE-6001133"
+        "ZER-6002002",
+        "MAG-6003042",
+        "DWE-6001133",
+        "100-6001043",
+        "MAG-6001104",
+        "MAG-6002508",
+        "100-6000114",
+        "ZER-6002881",
+        "100-6002112",
+        "DWE-6002629",
+        "SQU-6001420",
+        "ZER-6003132",
+        "MAG-6002105",
+        "DWE-6002809",
+        "SQU-6000637",
+        "SQU-6002660",
+        "SQU-6002322",
+        "DWE-6002551"
       ]
     },
     {
@@ -342,8 +393,8 @@
       "how_found": "Grouped listings by (apartment_name, floor, total_floors, bedroom, carpet_area).",
       "impact": "Inflates available property inventory and presents identical units at conflicting prices.",
       "evidence": [
-        "DWE-6003269",
-        "MAG-6000753"
+        "MAG-6000753",
+        "DWE-6003269"
       ]
     },
     {
@@ -355,10 +406,10 @@
       "impact": "Treating timestamps as UTC introduces a 5.5 hour discrepancy in chronological sorting and recency calculations.",
       "evidence": [
         "100-6000047",
-        "100-6000062",
-        "100-6000066",
-        "100-6000085",
-        "100-6000114"
+        "MAG-6001603",
+        "MAG-6002450",
+        "100-6000320",
+        "MAG-6000434"
       ]
     },
     {
@@ -383,10 +434,7 @@
         "P60014",
         "P60015",
         "P60016",
-        "P60017",
-        "P60018",
-        "P60019",
-        "P60020"
+        "P60017"
       ]
     },
     {
@@ -396,7 +444,13 @@
       "actual": "In /v1/rentals, the key is returned as 'super_builtup_area' (missing underscore), contradicting /v1/listings.",
       "how_found": "Compared field keys in response schemas between listings and rentals.",
       "impact": "Code expecting uniform property keys fails to read super built-up area on rental objects.",
-      "evidence": []
+      "evidence": [
+        "R6000001",
+        "R6001309",
+        "R6000002",
+        "R6000003",
+        "R6000004"
+      ]
     },
     {
       "endpoint": "/v1/analytics/summary",
@@ -405,7 +459,81 @@
       "actual": "Returns HTTP 404 Not Found. The endpoint does not exist on the server.",
       "how_found": "Sent GET request to /v1/analytics/summary and received 404 status code.",
       "impact": "Insights and summary screens must compute analytics dynamically from raw datasets.",
-      "evidence": []
+      "evidence": [
+        {
+          "request": "GET /v1/analytics/summary",
+          "status": 404,
+          "response": {
+            "detail": "Not Found"
+          }
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/listing/{id}",
+      "category": "missing_endpoint",
+      "documented": "Documented as 'GET /v1/listing/{listing_id}' using the singular noun 'listing'.",
+      "actual": "Returns HTTP 404 Not Found. The working endpoint uses the plural path 'GET /v1/listings/{id}'.",
+      "how_found": "Attempted GET /v1/listing/100-6000002 which returned 404, while GET /v1/listings/100-6000002 returned 200 OK.",
+      "impact": "Clients making detail requests using the documented singular path fail to retrieve property details.",
+      "evidence": [
+        {
+          "request": "GET /v1/listing/100-6000002",
+          "status": 404,
+          "response": {
+            "detail": "Not Found"
+          }
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/listings/{id}/similar",
+      "category": "missing_endpoint",
+      "documented": "Documented as providing up to 10 comparable listings (same locality, same bedrooms, price within 15%).",
+      "actual": "Returns HTTP 404 Not Found. The endpoint does not exist on the server.",
+      "how_found": "Sent GET request to /v1/listings/100-6000002/similar with valid Bearer token and observed 404 status code.",
+      "impact": "Similar property suggestions must be calculated dynamically on the frontend rather than via API.",
+      "evidence": [
+        {
+          "request": "GET /v1/listings/100-6000002/similar",
+          "status": 404,
+          "response": {
+            "detail": "Not Found"
+          }
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/favourites",
+      "category": "missing_endpoint",
+      "documented": "Documented as supporting GET /v1/favourites, POST /v1/favourites, and DELETE /v1/favourites/{id} for saved listings.",
+      "actual": "Returns HTTP 404 Not Found for all /v1/favourites routes. No server-side saved listings storage exists.",
+      "how_found": "Sent authenticated GET and POST requests to /v1/favourites and received 404 Not Found.",
+      "impact": "Saved/favourite listings must be managed client-side using localStorage or custom application state.",
+      "evidence": [
+        {
+          "request": "GET /v1/favourites",
+          "status": 404,
+          "response": {
+            "detail": "Not Found"
+          }
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/projects",
+      "category": "sorting",
+      "documented": "Supports 'sort_by' with 'price_min' and 'price_max' to order projects by price.",
+      "actual": "The server sorts the raw mixed-denomination float values directly without normalizing between Lakhs and Crores. In ascending order, 89.1 Lakhs (8.91M INR) is incorrectly sorted before 1.0 Crore (10M INR).",
+      "how_found": "Executed GET /v1/projects?sort_by=price_max&order=asc and observed P60273 (89.1 L) and P60179 (89.4 L) returned before P60040 (1.0 Cr).",
+      "impact": "Server-side project sorting by price produces fundamentally incorrect property ordering.",
+      "evidence": [
+        "P60273",
+        "P60179",
+        "P60090",
+        "P60040",
+        "P60244"
+      ]
     }
   ]
 }
