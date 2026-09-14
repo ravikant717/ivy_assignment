@@ -83,8 +83,13 @@ export function SavedMapView({
 
         listings.forEach((listing, index) => {
             // Use listing's coords or deterministic offset in Gurgaon if missing
-            const lat = Number(listing.latitude) || 28.4595 + ((index % 3) - 1) * 0.04;
-            const lng = Number(listing.longitude) || 77.0266 + ((index % 2) - 0.5) * 0.06;
+            let lat = Number(listing.latitude) || 28.4595 + ((index % 3) - 1) * 0.04;
+            let lng = Number(listing.longitude) || 77.0266 + ((index % 2) - 0.5) * 0.06;
+            if (lat > 70 && lng < 35) {
+                const temp = lat;
+                lat = lng;
+                lng = temp;
+            }
 
             if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
 
@@ -182,8 +187,13 @@ export function SavedMapView({
         const marker = markersMapRef.current.get(selectedListing.listing_id);
         if (!marker) return;
 
-        const lat = Number(selectedListing.latitude) || 28.4595;
-        const lng = Number(selectedListing.longitude) || 77.0266;
+        let lat = Number(selectedListing.latitude) || 28.4595;
+        let lng = Number(selectedListing.longitude) || 77.0266;
+        if (lat > 70 && lng < 35) {
+            const temp = lat;
+            lat = lng;
+            lng = temp;
+        }
 
         mapInstanceRef.current.panTo([lat, lng], {
             animate: true,

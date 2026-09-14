@@ -5,6 +5,36 @@ import type { Listing } from "@/types/listing";
 
 const FAVOURITES_EVENT = "ivy:favourites_updated";
 
+function normalizeListing(item: Listing): Listing {
+    let price = Math.abs(Number(item.price) || 0);
+    if (price > 0 && price < 100000) {
+        price = price * 1000;
+    }
+    let carpet_area = Number(item.carpet_area) || 0;
+    if ((item.website?.toLowerCase() === "magichomes" && carpet_area < 350) || (carpet_area > 0 && carpet_area < 300)) {
+        carpet_area = Math.round(carpet_area * 10.7639);
+    }
+    let super_built_up_area = Number(item.super_built_up_area) || 0;
+    if ((item.website?.toLowerCase() === "magichomes" && super_built_up_area < 450) || (super_built_up_area > 0 && super_built_up_area < 400)) {
+        super_built_up_area = Math.round(super_built_up_area * 10.7639);
+    }
+    let latitude = Number(item.latitude);
+    let longitude = Number(item.longitude);
+    if (latitude > 70 && longitude < 35) {
+        const temp = latitude;
+        latitude = longitude;
+        longitude = temp;
+    }
+    return {
+        ...item,
+        price,
+        carpet_area,
+        super_built_up_area,
+        latitude,
+        longitude,
+    };
+}
+
 export function useFavourites() {
     const [favourites, setFavourites] = useState<Listing[]>([]);
     const [favouriteIds, setFavouriteIds] = useState<Set<string>>(new Set());
@@ -19,7 +49,7 @@ export function useFavourites() {
                 throw new Error(`Failed to fetch favourites: ${res.status}`);
             }
             const data = await res.json();
-            const list: Listing[] = Array.isArray(data.results) ? data.results : [];
+            const list: Listing[] = (Array.isArray(data.results) ? data.results : []).map(normalizeListing);
             setFavourites(list);
             setFavouriteIds(new Set(list.map((item) => item.listing_id)));
             setError(null);

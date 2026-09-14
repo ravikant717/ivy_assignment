@@ -19,8 +19,13 @@ export function formatIndianPrice(
         return "Price on Request";
     }
 
-    const num = Math.abs(rawNum);
+    let num = Math.abs(rawNum);
     if (num <= 0) return "Price on Request";
+
+    // For sale properties, fix 6 listings where price was scaled down by 1,000 in raw data
+    if (!isRental && num > 0 && num < 100000) {
+        num = num * 1000;
+    }
 
     const rental = isRental ?? num < 200000;
 
@@ -86,13 +91,24 @@ export function formatLocality(
 
 /**
  * Formats carpet area with sq ft suffix:
+ * Automatically normalizes MagicHomes sqm values (~70-130 sqm) to square feet.
  * e.g. 1160 -> "1,160 sq ft"
  */
-export function formatArea(carpetArea?: number | string | null): string {
-    const num = Number(carpetArea);
-    if (!carpetArea || Number.isNaN(num) || num <= 0) {
+export function formatArea(
+    carpetArea?: number | string | null,
+    website?: string | null
+): string {
+    const rawNum = Number(carpetArea);
+    if (!carpetArea || Number.isNaN(rawNum) || rawNum <= 0) {
         return "Area on Request";
     }
+
+    // Convert MagicHomes square metres (or suspicious < 300 sqm) to sq ft if not already converted
+    const isSqm =
+        (website?.toLowerCase() === "magichomes" && rawNum < 350) ||
+        (rawNum < 300 && rawNum > 30);
+    const num = isSqm ? Math.round(rawNum * 10.7639) : Math.round(rawNum);
+
     return `${num.toLocaleString("en-IN")} sq ft`;
 }
 

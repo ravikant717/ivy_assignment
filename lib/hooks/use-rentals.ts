@@ -102,14 +102,39 @@ export function useRentals(filters: FilterState, sort: SortOption = "relevance")
 
     const rentals = useMemo(
         () =>
-            deduplicatePagesById(query.data?.pages, "listing_id", (rental) => ({
-                ...rental,
-                price: Math.max(0, Number(rental.price) || 0),
-            })).filter((r) => r.is_live !== false),
+            deduplicatePagesById(query.data?.pages, "listing_id", (rental) => {
+                let carpet_area = Number(rental.carpet_area) || 0;
+                // Fallback to super_builtup_area (schema inconsistency per fixed API reference)
+                if (!carpet_area && rental.super_builtup_area) {
+                    carpet_area = Number(rental.super_builtup_area);
+                }
+                if ((rental.website?.toLowerCase() === "magichomes" && carpet_area < 350) || (carpet_area > 0 && carpet_area < 300)) {
+                    carpet_area = Math.round(carpet_area * 10.7639);
+                }
+
+                let latitude = Number(rental.latitude);
+                let longitude = Number(rental.longitude);
+                if (latitude > 70 && longitude < 35) {
+                    const temp = latitude;
+                    latitude = longitude;
+                    longitude = temp;
+                }
+
+                return {
+                    ...rental,
+                    price: Math.max(0, Number(rental.price) || 0),
+                    carpet_area,
+                    latitude,
+                    longitude,
+                };
+            }).filter((r) => r.is_live !== false),
         [query.data?.pages]
     );
 
-    const totalRentals = query.data?.pages[0]?.total ?? rentals.length;
+    const totalRentals =
+        !query.hasNextPage && rentals.length > 0
+            ? rentals.length
+            : query.data?.pages[0]?.total ?? rentals.length;
 
     return {
         ...query,

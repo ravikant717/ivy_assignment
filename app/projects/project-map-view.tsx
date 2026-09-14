@@ -29,8 +29,13 @@ export function ProjectMapView({
             onSelectItem={onSelectProject}
             getItemId={(p) => p.project_id}
             getItemCoords={(p) => {
-                const lat = Number(p.latitude);
-                const lng = Number(p.longitude);
+                let lat = Number(p.latitude);
+                let lng = Number(p.longitude);
+                if (lat > 70 && lng < 35) {
+                    const temp = lat;
+                    lat = lng;
+                    lng = temp;
+                }
                 return Number.isFinite(lat) && Number.isFinite(lng) ? [lat, lng] : null;
             }}
             getItemPopupData={(p, index) => ({

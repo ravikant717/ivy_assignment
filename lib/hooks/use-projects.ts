@@ -93,11 +93,28 @@ export function useProjects(
     });
 
     const projects = useMemo(
-        () => deduplicatePagesById(query.data?.pages, "project_id"),
+        () =>
+            deduplicatePagesById(query.data?.pages, "project_id", (p) => {
+                let latitude = Number(p.latitude);
+                let longitude = Number(p.longitude);
+                if (latitude > 70 && longitude < 35) {
+                    const temp = latitude;
+                    latitude = longitude;
+                    longitude = temp;
+                }
+                return {
+                    ...p,
+                    latitude,
+                    longitude,
+                };
+            }),
         [query.data?.pages]
     );
 
-    const totalProjects = query.data?.pages[0]?.total ?? projects.length;
+    const totalProjects =
+        !query.hasNextPage && projects.length > 0
+            ? projects.length
+            : query.data?.pages[0]?.total ?? projects.length;
 
     return {
         ...query,

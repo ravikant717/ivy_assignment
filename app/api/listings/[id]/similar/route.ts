@@ -3,6 +3,43 @@ import { fetchIvyWithAutoRefresh } from "@/lib/ivy-api";
 import { setIvyAuthCookies } from "@/lib/ivy-auth";
 import type { Listing } from "@/types/listing";
 
+function normalizeListing(item: Listing): Listing {
+    let price = Math.abs(Number(item.price) || 0);
+    // Fix scaled-down prices (6 listings divided by 1000 in raw data)
+    if (price > 0 && price < 100000) {
+        price = price * 1000;
+    }
+
+    // Fix MagicHomes area reported in square metres (~70-130 sqm -> sq ft)
+    let carpet_area = Number(item.carpet_area) || 0;
+    if ((item.website?.toLowerCase() === "magichomes" && carpet_area < 350) || (carpet_area > 0 && carpet_area < 300)) {
+        carpet_area = Math.round(carpet_area * 10.7639);
+    }
+
+    let super_built_up_area = Number(item.super_built_up_area) || 0;
+    if ((item.website?.toLowerCase() === "magichomes" && super_built_up_area < 450) || (super_built_up_area > 0 && super_built_up_area < 400)) {
+        super_built_up_area = Math.round(super_built_up_area * 10.7639);
+    }
+
+    // Fix swapped coordinates anomaly in raw data (Lat > 70, Lng < 35)
+    let latitude = Number(item.latitude);
+    let longitude = Number(item.longitude);
+    if (latitude > 70 && longitude < 35) {
+        const temp = latitude;
+        latitude = longitude;
+        longitude = temp;
+    }
+
+    return {
+        ...item,
+        price,
+        carpet_area,
+        super_built_up_area,
+        latitude,
+        longitude,
+    };
+}
+
 export async function GET(
     request: NextRequest,
     props: { params: Promise<{ id: string }> }
@@ -27,7 +64,8 @@ export async function GET(
             );
         }
 
-        const targetListing: Listing = await targetResult.response.json();
+        const rawTarget: Listing = await targetResult.response.json();
+        const targetListing: Listing = normalizeListing(rawTarget);
         const targetId = targetListing.listing_id;
         const targetLocality = (targetListing.locality || "").trim().toLowerCase();
         const targetBed = Number(targetListing.bedroom);
@@ -50,7 +88,11 @@ export async function GET(
 
         if (!("errorResponse" in candidatesResult) && candidatesResult.response.ok) {
             const data = await candidatesResult.response.json();
-            candidates = Array.isArray(data) ? data : data.results || [];
+            const rawCandidates: Listing[] = Array.isArray(data) ? data : data.results || [];
+            // Filter out inactive listings and corrupt zero/negative prices, then normalize
+            candidates = rawCandidates
+                .filter((item) => item.is_live !== false && Number(item.price) !== 0)
+                .map(normalizeListing);
         }
 
         // 3. Strict comparable filter:
@@ -108,15 +150,17 @@ export async function GET(
         if (combinedResults.length < 10) {
             const cityResult = await fetchIvyWithAutoRefresh(
                 request,
-                `/v1/listings?bhk=${targetBed}&limit=30`
+                `/v1/listings?bhk=${targetBed}&limit=50`
             );
             if (!("errorResponse" in cityResult) && cityResult.response.ok) {
                 const cityData = await cityResult.response.json();
-                const cityItems: Listing[] = Array.isArray(cityData)
+                const rawCityItems: Listing[] = Array.isArray(cityData)
                     ? cityData
                     : cityData.results || [];
 
-                const cityMatches = cityItems
+                const cityMatches = rawCityItems
+                    .filter((item) => item.is_live !== false && Number(item.price) !== 0)
+                    .map(normalizeListing)
                     .filter((item) => !seenIds.has(item.listing_id))
                     .sort(
                         (a, b) => Math.abs(a.price - targetPrice) - Math.abs(b.price - targetPrice)

@@ -207,7 +207,9 @@ export async function proxyIvyApi(
             } else if (key === "locality") {
                 apiUrl.searchParams.set("locality", value.trim().toLowerCase());
             } else if (key === "furnishing") {
-                apiUrl.searchParams.set("furnishing", value.trim().toLowerCase());
+                let fVal = value.trim().toLowerCase();
+                if (fVal === "furnished") fVal = "fully-furnished";
+                apiUrl.searchParams.set("furnishing", fVal);
             } else if (key === "minPrice") {
                 apiUrl.searchParams.set("min_price", value);
             } else if (key === "maxPrice") {

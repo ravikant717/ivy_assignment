@@ -19,7 +19,7 @@ export const BEDROOM_OPTIONS = ["1", "2", "3", "4"] as const;
 
 export const FURNISHING_OPTIONS = [
     { label: "Any Furnishing", value: "" },
-    { label: "Furnished", value: "furnished" },
+    { label: "Furnished", value: "fully-furnished" },
     { label: "Semi-furnished", value: "semi-furnished" },
     { label: "Unfurnished", value: "unfurnished" },
 ] as const;
