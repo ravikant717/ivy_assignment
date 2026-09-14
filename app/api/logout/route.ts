@@ -1,12 +1,16 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
+import { clearIvyAuthCookies } from "@/lib/ivy-auth";
 
 export async function POST() {
     try {
-        const cookieStore = await cookies();
-        cookieStore.delete("ivy_token");
+        const response = NextResponse.json({
+            success: true,
+            message: "Logged out successfully",
+        });
 
-        return NextResponse.json({ success: true, message: "Logged out successfully" });
+        clearIvyAuthCookies(response);
+
+        return response;
     } catch {
         return NextResponse.json(
             { success: false, message: "Failed to log out" },

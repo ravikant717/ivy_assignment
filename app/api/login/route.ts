@@ -1,62 +1,74 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import {
+    cleanBearerToken,
+    getIvyApiKey,
+    getIvyBaseUrl,
+    setIvyAuthCookies,
+} from "@/lib/ivy-auth";
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
     try {
-        const { email, password } = await request.json();
+        const body = await request.json();
 
-        const ivyResponse = await fetch(
-            `${process.env.IVY_BASE_URL}/auth/login`,
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-API-Key": process.env.IVY_API_KEY!,
-                },
-                body: JSON.stringify({
-                    email,
-                    password,
-                }),
-                cache: "no-store",
-            }
-        );
+        const baseUrl = getIvyBaseUrl();
+        const apiKey = getIvyApiKey();
 
-        const data = await ivyResponse.json();
+        const response = await fetch(`${baseUrl}/auth/login`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                ...(apiKey ? { "X-API-Key": apiKey } : {}),
+                Accept: "application/json",
+            },
+            body: JSON.stringify(body),
+            cache: "no-store",
+        });
 
-        if (!ivyResponse.ok) {
+        const data = await response.json();
+
+        if (!response.ok) {
+            return NextResponse.json(data, {
+                status: response.status,
+            });
+        }
+
+        const rawAccessToken = data.access_token || data.token;
+        const rawRefreshToken = data.refresh_token;
+
+        if (!rawAccessToken || !rawRefreshToken) {
             return NextResponse.json(
                 {
-                    message: data.detail || "Invalid email or password",
+                    error: "Login succeeded but tokens were missing",
+                    response: data,
                 },
-                { status: ivyResponse.status }
+                {
+                    status: 500,
+                }
             );
         }
 
-        const token = data.access_token || data.token;
-
-        if (!token) {
-            return NextResponse.json(
-                { message: "Ivy login succeeded but no token was returned" },
-                { status: 500 }
-            );
-        }
-
-        const response = NextResponse.json({
-            user: data.user,
+        const nextResponse = NextResponse.json({
+            success: true,
+            message: "Login successful",
         });
 
-        response.cookies.set("ivy_token", token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
-            path: "/",
-            maxAge: 60 * 60 * 24,
+        // Set standardized HTTP-only session cookies
+        setIvyAuthCookies(nextResponse, {
+            accessToken: cleanBearerToken(rawAccessToken),
+            refreshToken: cleanBearerToken(rawRefreshToken),
         });
 
-        return response;
-    } catch {
+        return nextResponse;
+    } catch (error) {
+        console.error("Login route error:", error);
+
         return NextResponse.json(
-            { message: "Unable to connect to Ivy Homes" },
-            { status: 500 }
+            {
+                error: "Internal server error during login",
+            },
+            {
+                status: 500,
+            }
         );
     }
 }

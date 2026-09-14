@@ -128,3 +128,27 @@
     @apply font-sans;
   }
 }
+
+/* Custom Leaflet Map styling matching mockup */
+.custom-leaflet-marker {
+  background: transparent !important;
+  border: none !important;
+}
+
+.custom-ivy-popup .leaflet-popup-content-wrapper {
+  background: white;
+  border-radius: 14px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  padding: 0;
+  border: 1px solid #f1f5f9;
+}
+
+.custom-ivy-popup .leaflet-popup-content {
+  margin: 6px 8px;
+  line-height: normal;
+}
+
+.custom-ivy-popup .leaflet-popup-tip {
+  background: white;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
