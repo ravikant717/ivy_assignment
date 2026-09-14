@@ -1,23 +1,27 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { IVY_TOKEN_COOKIE, IVY_REFRESH_TOKEN_COOKIE } from "@/lib/ivy-auth";
 
 export async function requireAuth() {
     const cookieStore = await cookies();
-    const token = cookieStore.get("ivy_token")?.value;
+    const token = cookieStore.get(IVY_TOKEN_COOKIE)?.value;
+    const refreshToken = cookieStore.get(IVY_REFRESH_TOKEN_COOKIE)?.value;
 
-    if (!token) {
+    // Only redirect to login if BOTH the access token and the refresh token are absent
+    if (!token && !refreshToken) {
         redirect("/login");
     }
 
-    return { token };
+    return { token: token || refreshToken };
 }
 
 export async function requireUnAuth() {
     const cookieStore = await cookies();
-    const token = cookieStore.get("ivy_token")?.value;
+    const token = cookieStore.get(IVY_TOKEN_COOKIE)?.value;
+    const refreshToken = cookieStore.get(IVY_REFRESH_TOKEN_COOKIE)?.value;
 
-    if (token) {
-        redirect("/dashboard");
+    if (token || refreshToken) {
+        redirect("/listings");
     }
 
     return null;
