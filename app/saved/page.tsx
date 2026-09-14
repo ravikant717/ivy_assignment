@@ -4,7 +4,6 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import { Navbar } from "@/components/listings/navbar";
 import {
-    SavedFilterSidebar,
     SavedSearchBar,
     SavedHeader,
     SavedGrid,
@@ -23,8 +22,6 @@ export default function SavedPage() {
         searchQuery,
         setSearchQuery,
         handleSearchSubmit,
-        filters,
-        setFilters,
         handleClearAll,
         sortOption,
         setSortOption,
@@ -57,19 +54,7 @@ export default function SavedPage() {
                     </div>
                 ) : (
                     <div className="flex flex-col lg:flex-row gap-8 items-start">
-                        {/* 1. Left Sidebar Filters */}
-                        <div className="w-full lg:w-60 xl:w-64 shrink-0">
-                            <div className="sticky top-20">
-                                <SavedFilterSidebar
-                                    filters={filters}
-                                    onChange={setFilters}
-                                    onApply={() => {}}
-                                    onClearAll={handleClearAll}
-                                />
-                            </div>
-                        </div>
-
-                        {/* 2. Middle Content: Search, Header & Cards */}
+                        {/* 1. Main Content: Search, Header & Property Cards Grid */}
                         <div className="flex-1 min-w-0 space-y-6">
                             <SavedSearchBar
                                 value={searchQuery}
@@ -92,8 +77,8 @@ export default function SavedPage() {
                             />
                         </div>
 
-                        {/* 3. Right Column: Bangalore Map View */}
-                        <div className="w-full lg:w-80 xl:w-96 shrink-0">
+                        {/* 2. Right Column: Gurgaon Map View */}
+                        <div className="w-full lg:w-[400px] xl:w-[450px] shrink-0">
                             <div className="sticky top-20">
                                 <SavedMapView
                                     listings={filteredListings}

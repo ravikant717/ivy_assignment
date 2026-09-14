@@ -1,4 +1,4 @@
-import { Leaf } from "lucide-react";
+import { IvyLogo } from "@/components/common/ivy-logo";
 import { LoginForm } from "@/components/login-form";
 
 export default function LoginPage() {
@@ -16,11 +16,8 @@ export default function LoginPage() {
                     <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-black/25 to-black/60" />
 
                     {/* Brand header */}
-                    <div className="relative z-10 flex items-center gap-2.5">
-                        <Leaf className="h-6 w-6 text-white" />
-                        <span className="text-xl font-bold tracking-tight text-white">
-                            Ivy Homes
-                        </span>
+                    <div className="relative z-10 flex items-center">
+                        <IvyLogo className="h-7 w-auto" variant="white" />
                     </div>
 
                     {/* Middle Hero Heading */}

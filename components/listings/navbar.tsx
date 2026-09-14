@@ -2,10 +2,11 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { ChevronDown, LogOut, User } from "lucide-react";
+import { ChevronDown, LogOut, User, MapPin } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
 
 import { useFavourites } from "@/lib/hooks/use-favourites";
+import { IvyLogo } from "@/components/common/ivy-logo";
 
 interface NavbarProps {
     savedCount?: number;
@@ -47,21 +48,15 @@ export function Navbar({ savedCount: propSavedCount, userName = "Ravikant", acti
             <div className="mx-auto flex max-w-[1440px] items-center justify-between px-6 py-3.5 md:px-10">
                 {/* Left: Brand Logo & Navigation */}
                 <div className="flex items-center gap-10">
-                    <Link href="/listings" className="flex items-center gap-2.5">
-                        {/* Ivy Leaf Logo */}
-                        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50 text-[#047857]">
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="currentColor"
-                                className="h-5 w-5 text-[#047857]"
-                            >
-                                <path d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66C7.5 17.5 9.5 13 17 11V8m0-6C9.5 2 4 7.5 4 15c0 .34.02.67.05 1C6.1 11.5 10 9 17 8v2c4 0 5-3 5-7 0 0-2.5-.5-5-.5v-.5Z" />
-                            </svg>
-                        </div>
-                        <span className="text-xl font-bold tracking-tight text-gray-900">
-                            Ivy Homes
-                        </span>
+                    <Link href="/listings" className="flex items-center">
+                        <IvyLogo className="h-6 w-auto" />
                     </Link>
+
+                    {/* Active Market City Badge */}
+                    <div className="hidden sm:flex items-center gap-1.5 rounded-full border border-emerald-200/80 bg-emerald-50/70 px-2.5 py-1 text-xs font-semibold text-[#047857]">
+                        <MapPin className="h-3.5 w-3.5 text-[#047857]" />
+                        <span>Gurgaon</span>
+                    </div>
 
                     {/* Navigation Links */}
                     <nav className="hidden items-center gap-8 md:flex">

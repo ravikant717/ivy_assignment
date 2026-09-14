@@ -2,7 +2,8 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff, Leaf } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
+import { IvyLogo } from "@/components/common/ivy-logo";
 
 interface LoginFormProps {
     className?: string;
@@ -67,11 +68,8 @@ export function LoginForm({ className = "", onSuccess }: LoginFormProps) {
     return (
         <div className={`w-full max-w-[380px] mx-auto ${className}`}>
             {/* Mobile brand header */}
-            <div className="mb-6 flex items-center gap-2.5 lg:hidden">
-                <Leaf className="h-6 w-6 text-[#1e7e53]" />
-                <span className="text-xl font-bold tracking-tight text-[#111827]">
-                    Ivy Homes
-                </span>
+            <div className="mb-6 flex items-center lg:hidden">
+                <IvyLogo className="h-7 w-auto" />
             </div>
 
             {/* Title & subtitle */}

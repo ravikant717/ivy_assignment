@@ -1,0 +1,596 @@
+{
+  "city": "gurgaon",
+  "city_name": "Gurgaon",
+  "reported_listings": 3200,
+  "downloaded_listings": 3500,
+  "reported_rentals": 1207,
+  "downloaded_rentals": 1320,
+  "reported_projects": 366,
+  "downloaded_projects": 400,
+  "total_listings": 3500,
+  "median_price": 14740000,
+  "average_price": 15709169,
+  "median_price_per_sqft": 14543,
+  "average_price_sqft": 26700,
+  "price_growth_pct": 6.4,
+  "average_rent": 35060,
+  "median_rent": 32900,
+  "rent_growth_pct": 5.2,
+  "total_listings_growth_pct": 12.5,
+  "rental_yield": 2.9,
+  "rental_yield_growth_pct": 0.4,
+  "by_locality": [
+    {
+      "locality": "sector 65",
+      "display_name": "Sector 65",
+      "count": 385,
+      "rent_count": 128,
+      "total_units": 513,
+      "median_price": 16110000,
+      "price_sqft": 14997,
+      "price_label": "₹ 15.0K",
+      "average_rent": 34826,
+      "rental_yield": 2.6,
+      "searches": "14.2K searches",
+      "searches_num": 14200,
+      "growth": 18,
+      "lat": 28.4116,
+      "lng": 77.0655
+    },
+    {
+      "locality": "dwarka expressway",
+      "display_name": "Dwarka Expressway",
+      "count": 373,
+      "rent_count": 153,
+      "total_units": 526,
+      "median_price": 14450000,
+      "price_sqft": 14708,
+      "price_label": "₹ 14.7K",
+      "average_rent": 35672,
+      "rental_yield": 3,
+      "searches": "12.8K searches",
+      "searches_num": 12800,
+      "growth": 14,
+      "lat": 28.5132,
+      "lng": 76.9924
+    },
+    {
+      "locality": "golf course road",
+      "display_name": "Golf Course Road",
+      "count": 365,
+      "rent_count": 140,
+      "total_units": 505,
+      "median_price": 14590000,
+      "price_sqft": 14252,
+      "price_label": "₹ 14.3K",
+      "average_rent": 33303,
+      "rental_yield": 2.7,
+      "searches": "11.5K searches",
+      "searches_num": 11500,
+      "growth": 12,
+      "lat": 28.4559,
+      "lng": 77.0984
+    },
+    {
+      "locality": "sohna road",
+      "display_name": "Sohna Road",
+      "count": 359,
+      "rent_count": 114,
+      "total_units": 473,
+      "median_price": 14440000,
+      "price_sqft": 14021,
+      "price_label": "₹ 14.0K",
+      "average_rent": 32753,
+      "rental_yield": 2.7,
+      "searches": "9.8K searches",
+      "searches_num": 9800,
+      "growth": 9,
+      "lat": 28.4234,
+      "lng": 77.0384
+    },
+    {
+      "locality": "sector 49",
+      "display_name": "Sector 49",
+      "count": 355,
+      "rent_count": 123,
+      "total_units": 478,
+      "median_price": 14730000,
+      "price_sqft": 15097,
+      "price_label": "₹ 15.1K",
+      "average_rent": 35187,
+      "rental_yield": 2.9,
+      "searches": "8.4K searches",
+      "searches_num": 8400,
+      "growth": 8,
+      "lat": 28.4218,
+      "lng": 77.0494
+    },
+    {
+      "locality": "mg road",
+      "display_name": "Mg Road",
+      "count": 353,
+      "rent_count": 124,
+      "total_units": 477,
+      "median_price": 14490000,
+      "price_sqft": 15000,
+      "price_label": "₹ 15.0K",
+      "average_rent": 37197,
+      "rental_yield": 3.1,
+      "searches": "7.6K searches",
+      "searches_num": 7600,
+      "growth": 11,
+      "lat": 28.4795,
+      "lng": 77.0801
+    },
+    {
+      "locality": "dlf phase 3",
+      "display_name": "Dlf Phase 3",
+      "count": 346,
+      "rent_count": 131,
+      "total_units": 477,
+      "median_price": 14550000,
+      "price_sqft": 14492,
+      "price_label": "₹ 14.5K",
+      "average_rent": 34785,
+      "rental_yield": 2.9,
+      "searches": "7.1K searches",
+      "searches_num": 7100,
+      "growth": 10,
+      "lat": 28.4947,
+      "lng": 77.0984
+    },
+    {
+      "locality": "new gurgaon",
+      "display_name": "New Gurgaon",
+      "count": 329,
+      "rent_count": 138,
+      "total_units": 467,
+      "median_price": 15110000,
+      "price_sqft": 14506,
+      "price_label": "₹ 14.5K",
+      "average_rent": 35667,
+      "rental_yield": 2.8,
+      "searches": "6.4K searches",
+      "searches_num": 6400,
+      "growth": 7,
+      "lat": 28.415,
+      "lng": 76.975
+    },
+    {
+      "locality": "sector 82",
+      "display_name": "Sector 82",
+      "count": 319,
+      "rent_count": 147,
+      "total_units": 466,
+      "median_price": 15320000,
+      "price_sqft": 14805,
+      "price_label": "₹ 14.8K",
+      "average_rent": 35421,
+      "rental_yield": 2.8,
+      "searches": "5.9K searches",
+      "searches_num": 5900,
+      "growth": 6,
+      "lat": 28.3982,
+      "lng": 76.965
+    },
+    {
+      "locality": "sector 56",
+      "display_name": "Sector 56",
+      "count": 310,
+      "rent_count": 122,
+      "total_units": 432,
+      "median_price": 14830000,
+      "price_sqft": 14095,
+      "price_label": "₹ 14.1K",
+      "average_rent": 35580,
+      "rental_yield": 2.9,
+      "searches": "5.1K searches",
+      "searches_num": 5100,
+      "growth": 5,
+      "lat": 28.435,
+      "lng": 77.105
+    }
+  ],
+  "by_property_type": [
+    {
+      "type": "Apartment",
+      "raw_type": "apartment",
+      "count": 2592,
+      "percentage": 74.1,
+      "color": "#047857"
+    },
+    {
+      "type": "Independent House",
+      "raw_type": "independent house",
+      "count": 304,
+      "percentage": 8.7,
+      "color": "#10b981"
+    },
+    {
+      "type": "Builder Floor",
+      "raw_type": "builder floor",
+      "count": 265,
+      "percentage": 7.6,
+      "color": "#34d399"
+    },
+    {
+      "type": "Villa",
+      "raw_type": "villa",
+      "count": 236,
+      "percentage": 6.7,
+      "color": "#6ee7b7"
+    },
+    {
+      "type": "Plot",
+      "raw_type": "plot",
+      "count": 103,
+      "percentage": 2.9,
+      "color": "#a7f3d0"
+    }
+  ],
+  "by_bhk": [
+    {
+      "bedroom": 1,
+      "label": "1 BHK",
+      "count": 388,
+      "percentage": 11
+    },
+    {
+      "bedroom": 2,
+      "label": "2 BHK",
+      "count": 1150,
+      "percentage": 33
+    },
+    {
+      "bedroom": 3,
+      "label": "3 BHK",
+      "count": 1297,
+      "percentage": 37
+    },
+    {
+      "bedroom": 4,
+      "label": "4 BHK",
+      "count": 490,
+      "percentage": 14
+    },
+    {
+      "bedroom": 5,
+      "label": "5+ BHK",
+      "count": 175,
+      "percentage": 5
+    }
+  ],
+  "price_trends": [
+    {
+      "month": "Jan",
+      "year": "2026",
+      "label": "Jan 2026",
+      "price_sqft": 13900
+    },
+    {
+      "month": "Feb",
+      "year": "2026",
+      "label": "Feb 2026",
+      "price_sqft": 13838
+    },
+    {
+      "month": "Mar",
+      "year": "2026",
+      "label": "Mar 2026",
+      "price_sqft": 13993
+    },
+    {
+      "month": "Apr",
+      "year": "2026",
+      "label": "Apr 2026",
+      "price_sqft": 13980
+    },
+    {
+      "month": "May",
+      "year": "2026",
+      "label": "May 2026",
+      "price_sqft": 14216
+    },
+    {
+      "month": "Jun",
+      "year": "2026",
+      "label": "Jun 2026",
+      "price_sqft": 15896
+    },
+    {
+      "month": "Jul",
+      "year": "2026",
+      "label": "Jul 2026",
+      "price_sqft": 16368
+    },
+    {
+      "month": "Aug",
+      "year": "2026",
+      "label": "Aug 2026",
+      "price_sqft": 15169
+    }
+  ],
+  "rental_trends": [
+    {
+      "month": "Jan",
+      "year": "2026",
+      "label": "Jan 2026",
+      "price_sqft": 31500,
+      "rent_pm": 31500
+    },
+    {
+      "month": "Feb",
+      "year": "2026",
+      "label": "Feb 2026",
+      "price_sqft": 32200,
+      "rent_pm": 32200
+    },
+    {
+      "month": "Mar",
+      "year": "2026",
+      "label": "Mar 2026",
+      "price_sqft": 32600,
+      "rent_pm": 32600
+    },
+    {
+      "month": "Apr",
+      "year": "2026",
+      "label": "Apr 2026",
+      "price_sqft": 32800,
+      "rent_pm": 32800
+    },
+    {
+      "month": "May",
+      "year": "2026",
+      "label": "May 2026",
+      "price_sqft": 32900,
+      "rent_pm": 32900
+    },
+    {
+      "month": "Jun",
+      "year": "2026",
+      "label": "Jun 2026",
+      "price_sqft": 32900,
+      "rent_pm": 32900
+    },
+    {
+      "month": "Jul",
+      "year": "2026",
+      "label": "Jul 2026",
+      "price_sqft": 32900,
+      "rent_pm": 32900
+    },
+    {
+      "month": "Aug",
+      "year": "2026",
+      "label": "Aug 2026",
+      "price_sqft": 33800,
+      "rent_pm": 33800
+    }
+  ],
+  "demand_supply_trends": [
+    {
+      "month": "Jan",
+      "year": "2026",
+      "label": "Jan 2026",
+      "supply": 266,
+      "demand": 490,
+      "ratio": 1.84
+    },
+    {
+      "month": "Feb",
+      "year": "2026",
+      "label": "Feb 2026",
+      "supply": 397,
+      "demand": 620,
+      "ratio": 1.56
+    },
+    {
+      "month": "Mar",
+      "year": "2026",
+      "label": "Mar 2026",
+      "supply": 441,
+      "demand": 740,
+      "ratio": 1.68
+    },
+    {
+      "month": "Apr",
+      "year": "2026",
+      "label": "Apr 2026",
+      "supply": 424,
+      "demand": 710,
+      "ratio": 1.67
+    },
+    {
+      "month": "May",
+      "year": "2026",
+      "label": "May 2026",
+      "supply": 459,
+      "demand": 890,
+      "ratio": 1.94
+    },
+    {
+      "month": "Jun",
+      "year": "2026",
+      "label": "Jun 2026",
+      "supply": 433,
+      "demand": 820,
+      "ratio": 1.89
+    },
+    {
+      "month": "Jul",
+      "year": "2026",
+      "label": "Jul 2026",
+      "supply": 461,
+      "demand": 870,
+      "ratio": 1.89
+    },
+    {
+      "month": "Aug",
+      "year": "2026",
+      "label": "Aug 2026",
+      "supply": 452,
+      "demand": 850,
+      "ratio": 1.88
+    }
+  ],
+  "demand_by_bhk": [
+    {
+      "label": "1 BHK",
+      "supplyPct": 8,
+      "demandPct": 9,
+      "status": "Balanced"
+    },
+    {
+      "label": "2 BHK",
+      "supplyPct": 33,
+      "demandPct": 42,
+      "status": "High Deficit"
+    },
+    {
+      "label": "3 BHK",
+      "supplyPct": 37,
+      "demandPct": 38,
+      "status": "Active Demand"
+    },
+    {
+      "label": "4+ BHK",
+      "supplyPct": 22,
+      "demandPct": 11,
+      "status": "Surplus"
+    }
+  ],
+  "discoveries": {
+    "totalRecords": 3500,
+    "liveCount": 2792,
+    "livePct": 79.8,
+    "inactiveCount": 708,
+    "verifiedCount": 2098,
+    "verifiedPct": 59.9,
+    "corruptCount": 12,
+    "corruptRecords": [
+      {
+        "id": "MAG-6000631",
+        "floor": 17,
+        "total_floors": 18,
+        "carpet_area": 828,
+        "price": -8550000,
+        "locality": "new gurgaon",
+        "issue": "Negative Price"
+      },
+      {
+        "id": "100-6001968",
+        "floor": 26,
+        "total_floors": 11,
+        "carpet_area": 745,
+        "price": 12010000,
+        "locality": "sector 65",
+        "issue": "Floor > Total Floors"
+      },
+      {
+        "id": "DWE-6002663",
+        "floor": 11,
+        "total_floors": 23,
+        "carpet_area": 811,
+        "price": -13650000,
+        "locality": "mg road",
+        "issue": "Negative Price"
+      },
+      {
+        "id": "100-6001461",
+        "floor": 11,
+        "total_floors": 18,
+        "carpet_area": 1155,
+        "price": -17880000,
+        "locality": "new gurgaon",
+        "issue": "Negative Price"
+      },
+      {
+        "id": "100-6000323",
+        "floor": 22,
+        "total_floors": 14,
+        "carpet_area": 1248,
+        "price": 21010000,
+        "locality": "golf course road",
+        "issue": "Floor > Total Floors"
+      },
+      {
+        "id": "ZER-6000669",
+        "floor": 1,
+        "total_floors": 4,
+        "carpet_area": 1173,
+        "price": -17660000,
+        "locality": "sohna road",
+        "issue": "Negative Price"
+      },
+      {
+        "id": "DWE-6001015",
+        "floor": 28,
+        "total_floors": 17,
+        "carpet_area": 1153,
+        "price": 13980000,
+        "locality": "sector 49",
+        "issue": "Floor > Total Floors"
+      },
+      {
+        "id": "SQU-6001477",
+        "floor": 37,
+        "total_floors": 28,
+        "carpet_area": 1192,
+        "price": 18070000,
+        "locality": "mg road",
+        "issue": "Floor > Total Floors"
+      },
+      {
+        "id": "MAG-6000453",
+        "floor": 12,
+        "total_floors": 5,
+        "carpet_area": 782,
+        "price": 15590000,
+        "locality": "golf course road",
+        "issue": "Floor > Total Floors"
+      },
+      {
+        "id": "DWE-6002846",
+        "floor": 15,
+        "total_floors": 8,
+        "carpet_area": 1265,
+        "price": 18590000,
+        "locality": "sector 82",
+        "issue": "Floor > Total Floors"
+      },
+      {
+        "id": "SQU-6003044",
+        "floor": 12,
+        "total_floors": 26,
+        "carpet_area": 761,
+        "price": -12640000,
+        "locality": "dwarka expressway",
+        "issue": "Negative Price"
+      },
+      {
+        "id": "100-6002071",
+        "floor": 6,
+        "total_floors": 11,
+        "carpet_area": 1167,
+        "price": -12340000,
+        "locality": "new gurgaon",
+        "issue": "Negative Price"
+      }
+    ],
+    "projectsTotal": 400,
+    "projectsWithDiscrepancy": 295,
+    "projectsDiscrepancyPct": 73.8,
+    "costliestProject": {
+      "id": "P60090",
+      "name": "Puravankara Willows",
+      "locality": "new gurgaon",
+      "priceMinCr": 55.8,
+      "priceMaxCr": 98.9
+    },
+    "medianBuyPriceCr": "1.47",
+    "avgPriceSqft": 14543,
+    "avgRentPm": 35060,
+    "avgYieldPct": "2.9%"
+  }
+}
