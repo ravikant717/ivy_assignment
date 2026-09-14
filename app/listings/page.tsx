@@ -152,10 +152,20 @@ export default function ListingsPage() {
                         <div className="space-y-4 lg:col-span-7">
                             {filteredListings.length === 0 ? (
                                 <PropertyEmptyState
-                                    emoji="🏡"
-                                    title="No listings match your filters"
-                                    description="Try adjusting or resetting your locality, bedroom, or price filters."
+                                    title="No listings found"
+                                    description={`We couldn’t find any properties matching your criteria.\nTry adjusting your filters or searching in a different location.`}
+                                    primaryActionLabel="Try different filters"
+                                    secondaryActionLabel="Browse all listings"
                                     onReset={() =>
+                                        setFilters({
+                                            search: "",
+                                            locality: "",
+                                            bedroom: "",
+                                            priceRange: "",
+                                            furnishing: "",
+                                        })
+                                    }
+                                    onSecondaryAction={() =>
                                         setFilters({
                                             search: "",
                                             locality: "",

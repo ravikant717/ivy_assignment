@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { Bed, Bath, Maximize2 } from "lucide-react";
 import type { Listing } from "@/types/listing";
 import { getListingImage } from "@/lib/listing-images";
@@ -77,9 +78,13 @@ export function ListingCard({
 
                 {/* Title & Locality */}
                 <div className="mt-1">
-                    <h2 className="text-base font-bold text-gray-900 transition group-hover:text-[#047857]">
+                    <Link
+                        href={`/listings/${listing.listing_id}`}
+                        onClick={(e) => e.stopPropagation()}
+                        className="text-base font-bold text-gray-900 transition hover:text-[#047857] hover:underline block"
+                    >
                         {formatPropertyTitle(listing.bedroom, listing.property_type)}
-                    </h2>
+                    </Link>
                     <p className="text-xs text-gray-500">
                         {formatLocality(listing.locality)}
                     </p>
