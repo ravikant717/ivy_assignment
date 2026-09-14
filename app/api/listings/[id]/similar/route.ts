@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { fetchIvyWithAutoRefresh } from "@/lib/ivy-api";
 import { setIvyAuthCookies } from "@/lib/ivy-auth";
 import type { Listing } from "@/types/listing";
+import { isCorruptListing } from "@/lib/constants/corrupt-listings";
 
 function normalizeListing(item: Listing): Listing {
     let price = Math.abs(Number(item.price) || 0);
@@ -89,9 +90,9 @@ export async function GET(
         if (!("errorResponse" in candidatesResult) && candidatesResult.response.ok) {
             const data = await candidatesResult.response.json();
             const rawCandidates: Listing[] = Array.isArray(data) ? data : data.results || [];
-            // Filter out inactive listings and corrupt zero/negative prices, then normalize
+            // Filter out inactive listings and corrupt listings (negative price, floor > total, etc.), then normalize
             candidates = rawCandidates
-                .filter((item) => item.is_live !== false && Number(item.price) !== 0)
+                .filter((item) => item.is_live !== false && !isCorruptListing(item))
                 .map(normalizeListing);
         }
 

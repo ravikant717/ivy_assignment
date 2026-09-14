@@ -12,6 +12,7 @@ import {
     Check,
 } from "lucide-react";
 import type { Listing } from "@/types/listing";
+import { formatPostedAt } from "@/lib/formatters";
 
 interface PropertyInfoProps {
     listing: Listing;
@@ -144,12 +145,14 @@ export function PropertyInfo({
                             </div>
                         </div>
 
-                        {/* Available From */}
+                        {/* Posted Date */}
                         <div className="flex items-start gap-2.5">
                             <Calendar className="h-4 w-4 text-gray-500 mt-0.5" />
                             <div>
-                                <p className="text-gray-500">Available from</p>
-                                <p className="font-semibold text-gray-900">15 Sep 2026</p>
+                                <p className="text-gray-500">Posted on</p>
+                                <p className="font-semibold text-gray-900">
+                                    {formatPostedAt(listing.posted_at)}
+                                </p>
                             </div>
                         </div>
 

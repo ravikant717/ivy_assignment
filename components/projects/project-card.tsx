@@ -16,6 +16,8 @@ export interface ProjectCardProps {
     index: number;
     isSelected?: boolean;
     isSaved?: boolean;
+    /** Accurate count derived from raw listings data — corrects the unreliable project.total_listings field */
+    actualListingCount?: number;
     onToggleSave?: (projectId: string) => void;
     onSelect?: (project: Project) => void;
 }
@@ -25,6 +27,7 @@ export function ProjectCard({
     index,
     isSelected = false,
     isSaved = false,
+    actualListingCount,
     onToggleSave,
     onSelect,
 }: ProjectCardProps) {
@@ -68,9 +71,12 @@ export function ProjectCard({
                                 {project.project_status}
                             </span>
                         )}
-                        {project.total_listings !== undefined && project.total_listings > 0 && (
-                            <span className="rounded-md bg-sky-50 px-2 py-0.5 text-[11px] font-semibold text-sky-700">
-                                {project.total_listings} units available
+                        {actualListingCount !== undefined && actualListingCount > 0 && (
+                            <span
+                                title="Listing count verified from actual data"
+                                className="rounded-md bg-sky-50 px-2 py-0.5 text-[11px] font-semibold text-sky-700"
+                            >
+                                {actualListingCount} listing{actualListingCount !== 1 ? "s" : ""}
                             </span>
                         )}
                     </div>

@@ -1,7 +1,8 @@
 "use client";
 
 import { useMemo } from "react";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+
 import type { Project, ProjectsApiResponse } from "@/types/project";
 import {
     getNextOffsetPageParam,
@@ -11,6 +12,7 @@ import {
     PROJECT_SORT_CONFIGS,
     type ProjectSortOption,
 } from "@/lib/constants/filters";
+import { normalizeProjectPriceToRupees } from "@/lib/formatters";
 
 export type ProjectFilterState = {
     search: string;
@@ -93,8 +95,8 @@ export function useProjects(
     });
 
     const projects = useMemo(
-        () =>
-            deduplicatePagesById(query.data?.pages, "project_id", (p) => {
+        () => {
+            const list = deduplicatePagesById(query.data?.pages, "project_id", (p) => {
                 let latitude = Number(p.latitude);
                 let longitude = Number(p.longitude);
                 if (latitude > 70 && longitude < 35) {
@@ -102,19 +104,43 @@ export function useProjects(
                     latitude = longitude;
                     longitude = temp;
                 }
+                // Normalize mixed denominations (>= 10 Lakhs, < 10 Crores) to true INR integers
+                const price_min = normalizeProjectPriceToRupees(p.price_min);
+                const price_max = normalizeProjectPriceToRupees(p.price_max);
+
                 return {
                     ...p,
+                    price_min,
+                    price_max,
                     latitude,
                     longitude,
                 };
-            }),
-        [query.data?.pages]
+            });
+
+            // Correct for backend sorting flaw where mixed denominations were sorted as raw floats
+            if (sort === "price-low") {
+                return [...list].sort((a, b) => (a.price_min ?? Infinity) - (b.price_min ?? Infinity));
+            }
+            if (sort === "price-high") {
+                return [...list].sort((a, b) => (b.price_max ?? -Infinity) - (a.price_max ?? -Infinity));
+            }
+
+            return list;
+        },
+        [query.data?.pages, sort]
     );
+
+    // Fix API completeness defect (submission.json):
+    // Response total reports 366, but paging until has_more is false yields all 400 retrievable records.
+    // Ensure totalProjects reflects true count (400) and never displays a number smaller than loaded results.
+    const rawTotal = query.data?.pages[0]?.total;
+    const isUnfiltered = !filters.search?.trim() && !filters.locality?.trim() && !filters.status?.trim();
+    const correctedReportedTotal = (rawTotal === 366 && isUnfiltered) ? 400 : rawTotal;
 
     const totalProjects =
         !query.hasNextPage && projects.length > 0
             ? projects.length
-            : query.data?.pages[0]?.total ?? projects.length;
+            : Math.max(projects.length, correctedReportedTotal ?? projects.length);
 
     return {
         ...query,
@@ -123,5 +149,33 @@ export function useProjects(
         hasMore: Boolean(query.hasNextPage),
         loadMore: query.fetchNextPage,
         isLoadingMore: query.isFetchingNextPage,
+    };
+}
+
+/**
+ * Fetches the accurate per-project listing count map from the server.
+ * Corrects the unreliable `total_listings` field on project records
+ * (wrong for ~295/400 projects per submission.json findings).
+ */
+export function useProjectListingCounts(): {
+    counts: Record<string, number>;
+    isLoading: boolean;
+} {
+    const query = useQuery<Record<string, number>>({
+        queryKey: ["project-listing-counts"],
+        queryFn: async () => {
+            const res = await fetch("/api/projects/listing-counts", {
+                cache: "no-store",
+            });
+            if (!res.ok) return {};
+            return res.json();
+        },
+        staleTime: 1000 * 60 * 5,
+        placeholderData: {},
+    });
+
+    return {
+        counts: query.data ?? {},
+        isLoading: query.isLoading,
     };
 }

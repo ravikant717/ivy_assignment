@@ -6,7 +6,7 @@ import { Navbar } from "@/components/listings/navbar";
 import { ProjectFilterBar } from "@/components/projects/project-filter-bar";
 import { ProjectCard } from "@/components/projects/project-card";
 import { ProjectMapView } from "./project-map-view";
-import { useProjects, type ProjectFilterState } from "@/lib/hooks/use-projects";
+import { useProjects, useProjectListingCounts, type ProjectFilterState } from "@/lib/hooks/use-projects";
 import {
     PROJECT_SORT_CONFIGS,
     type ProjectSortOption,
@@ -42,6 +42,9 @@ export default function ProjectsPage() {
         error,
         refetch,
     } = useProjects(filters, sort);
+
+    // Accurate listing counts per project (corrects unreliable API total_listings)
+    const { counts: listingCounts } = useProjectListingCounts();
 
     // Toggle saved/favorited status
     function handleToggleSave(projectId: string) {
@@ -199,6 +202,7 @@ export default function ProjectsPage() {
                                                 project.project_id
                                             }
                                             isSaved={savedIds.has(project.project_id)}
+                                            actualListingCount={listingCounts[project.project_id]}
                                             onToggleSave={handleToggleSave}
                                             onSelect={(p) => setSelectedProject(p)}
                                         />
